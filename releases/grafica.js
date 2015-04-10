@@ -129,7 +129,6 @@ GPoint.prototype.getValid = function() {
 GPoint.prototype.isValid = function() {
 	return this.valid;
 };
-
 /*
  * Title class.
  */
@@ -231,7 +230,6 @@ GTitle.prototype.setFontProperties = function(fontName, fontColor, fontSize) {
 		this.fontSize = fontSize;
 	}
 };
-
 /*
  * Axis label class.
  */
@@ -416,7 +414,6 @@ GAxisLabel.prototype.setFontProperties = function(fontName, fontColor, fontSize)
 		this.fontSize = fontSize;
 	}
 };
-
 /*
  * Axis class.
  */
@@ -1311,7 +1308,6 @@ GAxis.prototype.getPlotTicksRef = function() {
 GAxis.prototype.getAxisLabel = function() {
 	return this.lab;
 };
-
 /*
  * Histogram class.
  */
@@ -1695,7 +1691,6 @@ GHistogram.prototype.setFontProperties = function(fontName, fontColor, fontSize)
 		this.fontSize = fontSize;
 	}
 };
-
 /*
  * Layer class. A GLayer usually contains an array of points and a histogram
  */
@@ -3430,7 +3425,6 @@ GLayer.prototype.getLineWidth = function() {
 GLayer.prototype.getHistogram = function() {
 	return this.hist;
 };
-
 /*
  * Plot class. It controls the rest of the graphical elements (layers, axes,
  * title, limits).

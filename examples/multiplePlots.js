@@ -6,8 +6,8 @@ var multiplePlotsSketch = function(p) {
 
 	// Load the image before the sketch is run
 	p.preload = function() {
-		mug = p.loadImage("https://raw.github.com/jagracar/grafica.js/master/examples/data/beermug.png");
-		star = p.loadImage("https://raw.github.com/jagracar/grafica.js/master/examples/data/star.png");
+		mug = p.loadImage("data/beermug.png");
+		star = p.loadImage("data/star.png");
 	};
 
 	// Initial setup

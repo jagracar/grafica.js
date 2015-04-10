@@ -8,7 +8,7 @@ module.exports = function(grunt) {
 		},
 		concat : {
 			options : {
-				separator : '\n'
+				separator : ''
 			},
 			dist : {
 				src : ['src/GPoint.js', 'src/GTitle.js', 'src/GAxisLabel.js', 'src/GAxis.js', 'src/GHistogram.js', 'src/GLayer.js', 'src/GPlot.js'],
@@ -17,7 +17,7 @@ module.exports = function(grunt) {
 		},
 		uglify : {
 			options : {
-				banner : '/*! <%= pkg.name %>.js (<%= pkg.version %>): a library for p5.js. Author: <%= pkg.author %>, license: <%= pkg.license %>, <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+				banner : '/*! <%= pkg.name %>.js (<%= pkg.version %>): a library for p5.js. Author: <%= pkg.author %>, license: <%= pkg.license %>, <%= grunt.template.today("yyyy-mm-dd") %> */ '
 			},
 			build : {
 				src : 'lib/<%= pkg.name %>.js',

@@ -13,7 +13,7 @@ var oktoberfestSketch = function(p) {
 		// year,month,day,oktoberfest,bundestagswahl
 		// 2004,0,1,5,1
 		// ...
-		table = p.loadTable("https://raw.github.com/jagracar/grafica.js/master/examples/data/OktoberfestVSGermanElections.csv", "header");
+		table = p.loadTable("data/OktoberfestVSGermanElections.csv", "header");
 	};
 
 	// Initial setup

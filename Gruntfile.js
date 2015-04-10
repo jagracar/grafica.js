@@ -17,7 +17,7 @@ module.exports = function(grunt) {
 		},
 		uglify : {
 			options : {
-				banner : '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+				banner : '/*! <%= pkg.name %>.js (<%= pkg.version %>): a library for p5.js. Author: <%= pkg.author %>, license: <%= pkg.license %>, <%= grunt.template.today("yyyy-mm-dd") %> */\n'
 			},
 			build : {
 				src : 'lib/<%= pkg.name %>.js',

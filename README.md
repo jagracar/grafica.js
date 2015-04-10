@@ -16,9 +16,9 @@ With it you can easily create 2D plots that will enjoy the full interactive capa
   * Add labels to your points and display them with one click.
   * You can use images to represent your points.
   * Highly customizable. Defaults are nice, but you can tweak almost everything.
-  * Processing coding style. If you are used to work with Processing (p5.js), grafica.js will be very easy.
+  * Processing coding style. If you are used to work with Processing (or p5.js), grafica.js will be very easy.
   * It comes with a good set of [examples](https://github.com/jagracar/grafica.js/tree/master/examples).
-  * It's open source. grafica is under the GNU Lesser General Public License. You can find the complete source code [here](https://github.com/jagracar/grafica.js/tree/master/src).
+  * It's open source. grafica.js is under the GNU Lesser General Public License. You can find the complete source code [here](https://github.com/jagracar/grafica.js/tree/master/src).
 
 ## Installation
 

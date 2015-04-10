@@ -38,10 +38,10 @@ GTitle.prototype.draw = function() {
 GTitle.prototype.setDim = function() {
 	var xDim, yDim;
 
-	if (arguments.length == 2) {
+	if (arguments.length === 2) {
 		xDim = arguments[0];
 		yDim = arguments[1];
-	} else if (arguments.length == 1) {
+	} else if (arguments.length === 1) {
 		xDim = arguments[0][0];
 		yDim = arguments[0][1];
 	} else {

@@ -46,7 +46,7 @@ GHistogram.prototype.updateArrays = function() {
 	}
 
 	// Update the arrays
-	if (nPoints == 1) {
+	if (nPoints === 1) {
 		this.leftSides[0] = (this.type === GPlot.VERTICAL) ? 0.2 * this.dim[0] : 0.2 * this.dim[1];
 		this.rightSides[0] = this.leftSides[0];
 	} else if (nPoints > 1) {
@@ -152,7 +152,7 @@ GHistogram.prototype.draw = function(plotBasePoint) {
 
 				if (Math.abs(x2 - x1) > 2 * lw && Math.abs(y2 - y1) > 2 * lw) {
 					this.parent.rect(x1, y1, x2, y2);
-				} else if ((this.type === GPlot.VERTICAL && x2 != x1 && !(y1 == y2 && (y1 === 0 || y1 == -this.dim[1]))) || (this.type === GPlot.HORIZONTAL && y2 != y1 && !(x1 == x2 && (x1 === 0 || x1 == this.dim[0])))) {
+				} else if ((this.type === GPlot.VERTICAL && x2 !== x1 && !(y1 === y2 && (y1 === 0 || y1 === -this.dim[1]))) || (this.type === GPlot.HORIZONTAL && y2 !== y1 && !(x1 === x2 && (x1 === 0 || x1 === this.dim[0])))) {
 					this.parent.rect(x1, y1, x2, y2);
 					this.parent.line(x1, y1, x1, y2);
 					this.parent.line(x2, y1, x2, y2);
@@ -249,10 +249,10 @@ GHistogram.prototype.setType = function(type) {
 GHistogram.prototype.setDim = function() {
 	var xDim, yDim;
 
-	if (arguments.length == 2) {
+	if (arguments.length === 2) {
 		xDim = arguments[0];
 		yDim = arguments[1];
-	} else if (arguments.length == 1) {
+	} else if (arguments.length === 1) {
 		xDim = arguments[0][0];
 		yDim = arguments[0][1];
 	} else {
@@ -270,7 +270,7 @@ GHistogram.prototype.setPlotPoints = function(plotPoints) {
 	var i;
 	var nPoints = plotPoints.length;
 
-	if (this.plotPoints.length == nPoints) {
+	if (this.plotPoints.length === nPoints) {
 		for ( i = 0; i < nPoints; i++) {
 			this.plotPoints[i].set(plotPoints[i]);
 		}
@@ -296,7 +296,7 @@ GHistogram.prototype.setPlotPoints = function(plotPoints) {
 GHistogram.prototype.setPlotPoint = function(index, plotPoint) {
 	if (index < this.plotPoints.length) {
 		this.plotPoints[index].set(plotPoint);
-	} else if (index == this.plotPoints.length) {
+	} else if (index === this.plotPoints.length) {
 		this.plotPoints[index] = new GPoint(plotPoint);
 	} else {
 		throw new Error("GHistogram.setPlotPoint(): the index position is outside the array size");
@@ -306,9 +306,9 @@ GHistogram.prototype.setPlotPoint = function(index, plotPoint) {
 };
 
 GHistogram.prototype.addPlotPoint = function() {
-	if (arguments.length == 2) {
+	if (arguments.length === 2) {
 		this.plotPoints.push(new GPoint(arguments[0], arguments[1]));
-	} else if (arguments.length == 1) {
+	} else if (arguments.length === 1) {
 		this.plotPoints.push(new GPoint(arguments[0]));
 	} else {
 		throw new Error("GHistogram.addPlotPoint(): signature not supported");

@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/jagracar/grafica.js/issues"
   },
-  "author": "jagracar",
+  "author": "Javier Graciá Carpio",
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-contrib-concat": "^0.5.1",

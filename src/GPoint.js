@@ -4,23 +4,23 @@
 function GPoint() {
 	var x, y, label;
 
-	if (arguments.length == 3) {
+	if (arguments.length === 3) {
 		x = arguments[0];
 		y = arguments[1];
 		label = arguments[2];
-	} else if (arguments.length == 2 && arguments[0] instanceof p5.Vector) {
+	} else if (arguments.length === 2 && arguments[0] instanceof p5.Vector) {
 		x = arguments[0].x;
 		y = arguments[0].y;
 		label = arguments[1];
-	} else if (arguments.length == 2) {
+	} else if (arguments.length === 2) {
 		x = arguments[0];
 		y = arguments[1];
 		label = "";
-	} else if (arguments.length == 1 && arguments[0] instanceof GPoint) {
+	} else if (arguments.length === 1 && arguments[0] instanceof GPoint) {
 		x = arguments[0].getX();
 		y = arguments[0].getY();
 		label = arguments[0].getLabel();
-	} else if (arguments.length == 1 && arguments[0] instanceof p5.Vector) {
+	} else if (arguments.length === 1 && arguments[0] instanceof p5.Vector) {
 		x = arguments[0].x;
 		y = arguments[0].y;
 		label = "";
@@ -45,23 +45,23 @@ GPoint.prototype.isValidNumber = function(number) {
 GPoint.prototype.set = function() {
 	var x, y, label;
 
-	if (arguments.length == 3) {
+	if (arguments.length === 3) {
 		x = arguments[0];
 		y = arguments[1];
 		label = arguments[2];
-	} else if (arguments.length == 2 && arguments[0] instanceof p5.Vector) {
+	} else if (arguments.length === 2 && arguments[0] instanceof p5.Vector) {
 		x = arguments[0].x;
 		y = arguments[0].y;
 		label = arguments[1];
-	} else if (arguments.length == 2) {
+	} else if (arguments.length === 2) {
 		x = arguments[0];
 		y = arguments[1];
 		label = "";
-	} else if (arguments.length == 1 && arguments[0] instanceof GPoint) {
+	} else if (arguments.length === 1 && arguments[0] instanceof GPoint) {
 		x = arguments[0].getX();
 		y = arguments[0].getY();
 		label = arguments[0].getLabel();
-	} else if (arguments.length == 1 && arguments[0] instanceof p5.Vector) {
+	} else if (arguments.length === 1 && arguments[0] instanceof p5.Vector) {
 		x = arguments[0].x;
 		y = arguments[0].y;
 		label = "";
@@ -92,13 +92,13 @@ GPoint.prototype.setLabel = function(label) {
 GPoint.prototype.setXY = function() {
 	var x, y;
 
-	if (arguments.length == 2) {
+	if (arguments.length === 2) {
 		x = arguments[0];
 		y = arguments[1];
-	} else if (arguments.length == 1 && arguments[0] instanceof GPoint) {
+	} else if (arguments.length === 1 && arguments[0] instanceof GPoint) {
 		x = arguments[0].getX();
 		y = arguments[0].getY();
-	} else if (arguments.length == 1 && arguments[0] instanceof p5.Vector) {
+	} else if (arguments.length === 1 && arguments[0] instanceof p5.Vector) {
 		x = arguments[0].x;
 		y = arguments[0].y;
 	} else {

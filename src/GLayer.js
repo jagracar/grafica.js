@@ -79,11 +79,11 @@ GLayer.prototype.valueToYPlot = function(y) {
 };
 
 GLayer.prototype.valueToPlot = function() {
-	if (arguments.length == 2) {
+	if (arguments.length === 2) {
 		return [this.valueToXPlot(arguments[0]), this.valueToYPlot(arguments[1])];
-	} else if (arguments.length == 1 && arguments[0] instanceof GPoint) {
+	} else if (arguments.length === 1 && arguments[0] instanceof GPoint) {
 		return new GPoint(this.valueToXPlot(arguments[0].getX()), this.valueToYPlot(arguments[0].getY()), arguments[0].getLabel());
-	} else if (arguments.length == 1 && arguments[0] instanceof Array && arguments[0][0] instanceof GPoint) {
+	} else if (arguments.length === 1 && arguments[0] instanceof Array && arguments[0][0] instanceof GPoint) {
 		var xScalingFactor, yScalingFactor, point, xPlot, yPlot, i;
 		var nPoints = arguments[0].length;
 		var plotPts = [];
@@ -217,11 +217,11 @@ GLayer.prototype.plotToValue = function(xPlot, yPlot) {
 GLayer.prototype.isInside = function() {
 	var xPlot, yPlot, valid;
 
-	if (arguments.length == 2) {
+	if (arguments.length === 2) {
 		xPlot = arguments[0];
 		yPlot = arguments[1];
 		valid = this.isValidNumber(xPlot) && this.isValidNumber(yPlot);
-	} else if (arguments.length == 1 && arguments[0] instanceof GPoint) {
+	} else if (arguments.length === 1 && arguments[0] instanceof GPoint) {
 		xPlot = arguments[0].getX();
 		yPlot = arguments[0].getY();
 		valid = arguments[0].isValid();
@@ -331,7 +331,7 @@ GLayer.prototype.obtainBoxIntersections = function(plotPoint1, plotPoint2) {
 			// Make sure we have the correct number of cuts
 			if (inside1 || inside2) {
 				// One of the points is inside. We should have one cut only
-				if (nCuts != 1) {
+				if (nCuts !== 1) {
 					var pointInside = (inside1) ? plotPoint1 : plotPoint2;
 
 					// If too many cuts
@@ -374,7 +374,7 @@ GLayer.prototype.obtainBoxIntersections = function(plotPoint1, plotPoint2) {
 
 				// If we have two cuts, order them (the closest to the first
 				// point goes first)
-				if (nCuts == 2) {
+				if (nCuts === 2) {
 					if ((Math.pow(this.cuts[0][0] - x1, 2) + Math.pow(this.cuts[0][1] - y1), 2) > (Math.pow(this.cuts[1][0] - x1, 2) + Math.pow(this.cuts[1][1] - y1, 2))) {
 						this.cuts[2][0] = this.cuts[0][0];
 						this.cuts[2][1] = this.cuts[0][1];
@@ -386,7 +386,7 @@ GLayer.prototype.obtainBoxIntersections = function(plotPoint1, plotPoint2) {
 				}
 
 				// If one cut is missing, add the same one twice
-				if (nCuts == 1) {
+				if (nCuts === 1) {
 					nCuts = 2;
 					this.cuts[1][0] = this.cuts[0][0];
 					this.cuts[1][1] = this.cuts[0][1];
@@ -394,9 +394,9 @@ GLayer.prototype.obtainBoxIntersections = function(plotPoint1, plotPoint2) {
 			}
 
 			// Some sanity checks
-			if ((inside1 || inside2) && nCuts != 1) {
+			if ((inside1 || inside2) && nCuts !== 1) {
 				console.log("There should be one cut!!!");
-			} else if (!inside1 && !inside2 && nCuts !== 0 && nCuts != 2) {
+			} else if (!inside1 && !inside2 && nCuts !== 0 && nCuts !== 2) {
 				console.log("There should be either 0 or 2 cuts!!! " + nCuts + " were found");
 			}
 		}
@@ -485,7 +485,7 @@ GLayer.prototype.drawPoints = function() {
 		this.parent.ellipseMode(this.parent.CENTER);
 		this.parent.noStroke();
 
-		if (nColors == 1 && nSizes == 1) {
+		if (nColors === 1 && nSizes === 1) {
 			this.parent.fill(this.pointColors[0]);
 
 			for ( i = 0; i < nPoints; i++) {
@@ -493,7 +493,7 @@ GLayer.prototype.drawPoints = function() {
 					this.parent.ellipse(this.plotPoints[i].getX(), this.plotPoints[i].getY(), this.pointSizes[0], this.pointSizes[0]);
 				}
 			}
-		} else if (nColors == 1) {
+		} else if (nColors === 1) {
 			this.parent.fill(this.pointColors[0]);
 
 			for ( i = 0; i < nPoints; i++) {
@@ -501,7 +501,7 @@ GLayer.prototype.drawPoints = function() {
 					this.parent.ellipse(this.plotPoints[i].getX(), this.plotPoints[i].getY(), this.pointSizes[i % nSizes], this.pointSizes[i % nSizes]);
 				}
 			}
-		} else if (nSizes == 1) {
+		} else if (nSizes === 1) {
 			for ( i = 0; i < nPoints; i++) {
 				if (this.inside[i]) {
 					this.parent.fill(this.pointColors[i % nColors]);
@@ -518,7 +518,7 @@ GLayer.prototype.drawPoints = function() {
 		}
 
 		this.parent.pop();
-	} else if (arguments.length == 1 && arguments[0] instanceof p5.Image) {
+	} else if (arguments.length === 1 && arguments[0] instanceof p5.Image) {
 		nPoints = this.plotPoints.length;
 
 		this.parent.push();
@@ -539,14 +539,14 @@ GLayer.prototype.drawPoints = function() {
 GLayer.prototype.drawPoint = function() {
 	var point, pointColor, pointSize, pointImg;
 
-	if (arguments.length == 3) {
+	if (arguments.length === 3) {
 		point = arguments[0];
 		pointColor = arguments[1];
 		pointSize = arguments[2];
-	} else if (arguments.length == 2 && arguments[1] instanceof p5.Image) {
+	} else if (arguments.length === 2 && arguments[1] instanceof p5.Image) {
 		point = arguments[0];
 		pointImg = arguments[1];
-	} else if (arguments.length == 1) {
+	} else if (arguments.length === 1) {
 		point = arguments[0];
 		pointColor = this.pointColors[0];
 		pointSize = this.pointSizes[0];
@@ -560,7 +560,7 @@ GLayer.prototype.drawPoint = function() {
 	if (this.isInside(xPlot, yPlot)) {
 		this.parent.push();
 
-		if ( typeof pointImg != "undefined") {
+		if ( typeof pointImg !== "undefined") {
 			this.parent.imageMode(this.parent.CENTER);
 			this.parent.image(pointImg, xPlot, yPlot);
 		} else {
@@ -607,22 +607,22 @@ GLayer.prototype.drawLines = function() {
 GLayer.prototype.drawLine = function() {
 	var point1, point2, lc, lw, slope, ycut;
 
-	if (arguments.length == 4 && arguments[0] instanceof GPoint) {
+	if (arguments.length === 4 && arguments[0] instanceof GPoint) {
 		point1 = arguments[0];
 		point2 = arguments[1];
 		lc = arguments[2];
 		lw = arguments[3];
-	} else if (arguments.length == 4) {
+	} else if (arguments.length === 4) {
 		slope = arguments[0];
 		ycut = arguments[1];
 		lc = arguments[2];
 		lw = arguments[3];
-	} else if (arguments.length == 2 && arguments[0] instanceof GPoint) {
+	} else if (arguments.length === 2 && arguments[0] instanceof GPoint) {
 		point1 = arguments[0];
 		point2 = arguments[1];
 		lc = this.lineColor;
 		lw = this.lineWidth;
-	} else if (arguments.length == 2) {
+	} else if (arguments.length === 2) {
 		slope = arguments[0];
 		ycut = arguments[1];
 		lc = this.lineColor;
@@ -631,7 +631,7 @@ GLayer.prototype.drawLine = function() {
 		throw new Error("GLayer.drawLine(): signature not supported");
 	}
 
-	if ( typeof slope != "undefined") {
+	if ( typeof slope !== "undefined") {
 		if (this.xLog && this.yLog) {
 			point1 = new GPoint(this.xLim[0], Math.pow(10, slope * Math.log(this.xLim[0]) / Math.LN10 + yCut));
 			point2 = new GPoint(this.xLim[1], Math.pow(10, slope * Math.log(this.xLim[1]) / Math.LN10 + yCut));
@@ -683,11 +683,11 @@ GLayer.prototype.drawLine = function() {
 GLayer.prototype.drawHorizontalLine = function() {
 	var value, lc, lw;
 
-	if (arguments.length == 3) {
+	if (arguments.length === 3) {
 		value = arguments[0];
 		lc = arguments[1];
 		lw = arguments[2];
-	} else if (arguments.length == 1) {
+	} else if (arguments.length === 1) {
 		value = arguments[0];
 		lc = this.lineColor;
 		lw = this.lineWidth;
@@ -711,11 +711,11 @@ GLayer.prototype.drawHorizontalLine = function() {
 GLayer.prototype.drawVerticalLine = function() {
 	var value, lc, lw;
 
-	if (arguments.length == 3) {
+	if (arguments.length === 3) {
 		value = arguments[0];
 		lc = arguments[1];
 		lw = arguments[2];
-	} else if (arguments.length == 1) {
+	} else if (arguments.length === 1) {
 		value = arguments[0];
 		lc = this.lineColor;
 		lw = this.lineWidth;
@@ -747,7 +747,7 @@ GLayer.prototype.drawFilledContour = function(contourType, referenceValue) {
 	}
 
 	// Draw the shape
-	if ( typeof shapePoints != "undefined" && shapePoints.length > 0) {
+	if ( typeof shapePoints !== "undefined" && shapePoints.length > 0) {
 		this.parent.push();
 		this.parent.fill(this.lineColor);
 		this.parent.noStroke();
@@ -825,7 +825,7 @@ GLayer.prototype.getHorizontalShape = function(referenceValue) {
 		// Calculate the starting point
 		var startPoint = new GPoint(shapePoints[0]);
 
-		if (startPoint.getX() !== 0 && startPoint.getX() != this.dim[0]) {
+		if (startPoint.getX() !== 0 && startPoint.getX() !== this.dim[0]) {
 			if (startPoint.getLabel() === "cut") {
 				if (this.plotPoints[indexFirstPoint].getX() < 0) {
 					startPoint.setX(0);
@@ -857,7 +857,7 @@ GLayer.prototype.getHorizontalShape = function(referenceValue) {
 		// Calculate the end point
 		var endPoint = new GPoint(shapePoints[shapePoints.length - 1]);
 
-		if (endPoint.getX() !== 0 && endPoint.getX() != this.dim[0] && indexLastPoint != nPoints - 1) {
+		if (endPoint.getX() !== 0 && endPoint.getX() !== this.dim[0] && indexLastPoint !== nPoints - 1) {
 			nextIndex = indexLastPoint + 1;
 
 			while (nextIndex < nPoints - 1 && !this.plotPoints[nextIndex].isValid()) {
@@ -968,7 +968,7 @@ GLayer.prototype.getVerticalShape = function(referenceValue) {
 		// Calculate the starting point
 		var startPoint = new GPoint(shapePoints[0]);
 
-		if (startPoint.getY() !== 0 && startPoint.getY() != -this.dim[1]) {
+		if (startPoint.getY() !== 0 && startPoint.getY() !== -this.dim[1]) {
 			if (startPoint.getLabel() === "cut") {
 				if (-this.plotPoints[indexFirstPoint].getY() < 0) {
 					startPoint.setY(0);
@@ -1000,7 +1000,7 @@ GLayer.prototype.getVerticalShape = function(referenceValue) {
 		// Calculate the end point
 		var endPoint = new GPoint(shapePoints[shapePoints.length - 1]);
 
-		if (endPoint.getY() !== 0 && endPoint.getY() != -this.dim[1] && indexLastPoint != nPoints - 1) {
+		if (endPoint.getY() !== 0 && endPoint.getY() !== -this.dim[1] && indexLastPoint !== nPoints - 1) {
 			nextIndex = indexLastPoint + 1;
 
 			while (nextIndex < nPoints - 1 && !this.plotPoints[nextIndex].isValid()) {
@@ -1080,13 +1080,13 @@ GLayer.prototype.drawLabel = function(point) {
 GLayer.prototype.drawLabelAtPlotPos = function(xPlot, yPlot) {
 	var point = this.getPointAtPlotPos(xPlot, yPlot);
 
-	if ( typeof point != "undefined") {
+	if ( typeof point !== "undefined") {
 		this.drawLabel(point);
 	}
 };
 
 GLayer.prototype.drawHistogram = function() {
-	if ( typeof this.hist != "undefined") {
+	if ( typeof this.hist !== "undefined") {
 		this.hist.draw(this.valueToPlot(this.histBasePoint));
 	}
 };
@@ -1125,7 +1125,7 @@ GLayer.prototype.drawPolygon = function(polygonPoints, polygonColor) {
 			var nextIndex = (i + 1 < nPoints) ? i + 1 : 0;
 			var nCuts = this.obtainBoxIntersections(point, plotPolygonPoints[nextIndex]);
 
-			if (nCuts == 1) {
+			if (nCuts === 1) {
 				tmp.push(new GPoint(this.cuts[0][0], this.cuts[0][1], "single cut"));
 			} else if (nCuts > 1) {
 				tmp.push(new GPoint(this.cuts[0][0], this.cuts[0][1], "double cut"));
@@ -1158,9 +1158,9 @@ GLayer.prototype.drawPolygon = function(polygonPoints, polygonColor) {
 				var deltaY = Math.abs(y2 - y1);
 
 				// Check that they come from consecutive axes
-				if (deltaX > 0 && deltaY > 0 && deltaX != this.dim[0] && deltaY != this.dim[1]) {
-					var x = (x1 === 0 || x1 == this.dim[0]) ? x1 : x2;
-					var y = (y1 === 0 || y1 == -this.dim[1]) ? y1 : y2;
+				if (deltaX > 0 && deltaY > 0 && deltaX !== this.dim[0] && deltaY !== this.dim[1]) {
+					var x = (x1 === 0 || x1 === this.dim[0]) ? x1 : x2;
+					var y = (y1 === 0 || y1 === -this.dim[1]) ? y1 : y2;
 					croppedPoly.push(new GPoint(x, y, "special cut"));
 				}
 			}
@@ -1215,10 +1215,10 @@ GLayer.prototype.drawAnnotation = function(text, x, y, horAlign, verAlign) {
 GLayer.prototype.setDim = function() {
 	var xDim, yDim;
 
-	if (arguments.length == 2) {
+	if (arguments.length === 2) {
 		xDim = arguments[0];
 		yDim = arguments[1];
-	} else if (arguments.length == 1) {
+	} else if (arguments.length === 1) {
 		xDim = arguments[0][0];
 		yDim = arguments[0][1];
 	} else {
@@ -1230,7 +1230,7 @@ GLayer.prototype.setDim = function() {
 		this.dim[1] = yDim;
 		this.updatePlotPoints();
 
-		if ( typeof this.hist != "undefined") {
+		if ( typeof this.hist !== "undefined") {
 			this.hist.setDim(this.dim);
 			this.hist.setPlotPoints(this.plotPoints);
 		}
@@ -1240,17 +1240,17 @@ GLayer.prototype.setDim = function() {
 GLayer.prototype.setXLim = function() {
 	var xMin, xMax;
 
-	if (arguments.length == 2) {
+	if (arguments.length === 2) {
 		xMin = arguments[0];
 		xMax = arguments[1];
-	} else if (arguments.length == 1) {
+	} else if (arguments.length === 1) {
 		xMin = arguments[0][0];
 		xMax = arguments[0][1];
 	} else {
 		throw new Error("GLayer.setXLim(): signature not supported");
 	}
 
-	if (xMin != xMax && this.isValidNumber(xMin) && this.isValidNumber(xMax)) {
+	if (xMin !== xMax && this.isValidNumber(xMin) && this.isValidNumber(xMax)) {
 		// Make sure the new limits makes sense
 		if (this.xLog && (xMin <= 0 || xMax <= 0)) {
 			console.log("One of the limits is negative. This is not allowed in logarithmic scale.");
@@ -1260,7 +1260,7 @@ GLayer.prototype.setXLim = function() {
 			this.updatePlotPoints();
 			this.updateInsideList();
 
-			if ( typeof this.hist != "undefined") {
+			if ( typeof this.hist !== "undefined") {
 				this.hist.setPlotPoints(this.plotPoints);
 			}
 		}
@@ -1270,17 +1270,17 @@ GLayer.prototype.setXLim = function() {
 GLayer.prototype.setYLim = function() {
 	var yMin, yMax;
 
-	if (arguments.length == 2) {
+	if (arguments.length === 2) {
 		yMin = arguments[0];
 		yMax = arguments[1];
-	} else if (arguments.length == 1) {
+	} else if (arguments.length === 1) {
 		yMin = arguments[0][0];
 		yMax = arguments[0][1];
 	} else {
 		throw new Error("GLayer.setYLim(): signature not supported");
 	}
 
-	if (yMin != yMax && this.isValidNumber(yMin) && this.isValidNumber(yMax)) {
+	if (yMin !== yMax && this.isValidNumber(yMin) && this.isValidNumber(yMax)) {
 		// Make sure the new limits makes sense
 		if (this.yLog && (yMin <= 0 || yMax <= 0)) {
 			console.log("One of the limits is negative. This is not allowed in logarithmic scale.");
@@ -1290,7 +1290,7 @@ GLayer.prototype.setYLim = function() {
 			this.updatePlotPoints();
 			this.updateInsideList();
 
-			if ( typeof this.hist != "undefined") {
+			if ( typeof this.hist !== "undefined") {
 				this.hist.setPlotPoints(this.plotPoints);
 			}
 		}
@@ -1300,12 +1300,12 @@ GLayer.prototype.setYLim = function() {
 GLayer.prototype.setXYLim = function() {
 	var xMin, xMax, yMin, yMax;
 
-	if (arguments.length == 4) {
+	if (arguments.length === 4) {
 		xMin = arguments[0];
 		xMax = arguments[1];
 		yMin = arguments[2];
 		yMax = arguments[3];
-	} else if (arguments.length == 2) {
+	} else if (arguments.length === 2) {
 		xMin = arguments[0][0];
 		xMax = arguments[0][1];
 		yMin = arguments[1][0];
@@ -1314,7 +1314,7 @@ GLayer.prototype.setXYLim = function() {
 		throw new Error("GLayer.setXYLim(): signature not supported");
 	}
 
-	if (xMin != xMax && yMin != yMax && this.isValidNumber(xMin) && this.isValidNumber(xMax) && this.isValidNumber(yMin) && this.isValidNumber(yMax)) {
+	if (xMin !== xMax && yMin !== yMax && this.isValidNumber(xMin) && this.isValidNumber(xMax) && this.isValidNumber(yMin) && this.isValidNumber(yMax)) {
 		// Make sure the new limits make sense
 		if (this.xLog && (xMin <= 0 || xMax <= 0)) {
 			console.log("One of the limits is negative. This is not allowed in logarithmic scale.");
@@ -1333,7 +1333,7 @@ GLayer.prototype.setXYLim = function() {
 		this.updatePlotPoints();
 		this.updateInsideList();
 
-		if ( typeof this.hist != "undefined") {
+		if ( typeof this.hist !== "undefined") {
 			this.hist.setPlotPoints(this.plotPoints);
 		}
 	}
@@ -1342,14 +1342,14 @@ GLayer.prototype.setXYLim = function() {
 GLayer.prototype.setLimAndLog = function() {
 	var xMin, xMax, yMin, yMax, xLog, yLog;
 
-	if (arguments.length == 6) {
+	if (arguments.length === 6) {
 		xMin = arguments[0];
 		xMax = arguments[1];
 		yMin = arguments[2];
 		yMax = arguments[3];
 		xLog = arguments[4];
 		yLog = arguments[5];
-	} else if (arguments.length == 4) {
+	} else if (arguments.length === 4) {
 		xMin = arguments[0][0];
 		xMax = arguments[0][1];
 		yMin = arguments[1][0];
@@ -1360,7 +1360,7 @@ GLayer.prototype.setLimAndLog = function() {
 		throw new Error("GLayer.setLimAndLog(): signature not supported");
 	}
 
-	if (xMin != xMax && yMin != yMax && this.isValidNumber(xMin) && this.isValidNumber(xMax) && this.isValidNumber(yMin) && this.isValidNumber(yMax)) {
+	if (xMin !== xMax && yMin !== yMax && this.isValidNumber(xMin) && this.isValidNumber(xMax) && this.isValidNumber(yMin) && this.isValidNumber(yMax)) {
 		// Make sure the new limits make sense
 		if (xLog && (xMin <= 0 || xMax <= 0)) {
 			console.log("One of the limits is negative. This is not allowed in logarithmic scale.");
@@ -1381,14 +1381,14 @@ GLayer.prototype.setLimAndLog = function() {
 		this.updatePlotPoints();
 		this.updateInsideList();
 
-		if ( typeof this.hist != "undefined") {
+		if ( typeof this.hist !== "undefined") {
 			this.hist.setPlotPoints(this.plotPoints);
 		}
 	}
 };
 
 GLayer.prototype.setXLog = function(xLog) {
-	if (xLog != this.xLog) {
+	if (xLog !== this.xLog) {
 		if (xLog && (this.xLim[0] <= 0 || this.xLim[1] <= 0)) {
 			console.log("One of the limits is negative. This is not allowed in logarithmic scale.");
 			console.log("Will set horizontal limits to (0.1, 10)");
@@ -1400,14 +1400,14 @@ GLayer.prototype.setXLog = function(xLog) {
 		this.updatePlotPoints();
 		this.updateInsideList();
 
-		if ( typeof this.hist != "undefined") {
+		if ( typeof this.hist !== "undefined") {
 			this.hist.setPlotPoints(this.plotPoints);
 		}
 	}
 };
 
 GLayer.prototype.setYLog = function(yLog) {
-	if (yLog != this.yLog) {
+	if (yLog !== this.yLog) {
 		if (yLog && (this.yLim[0] <= 0 || this.yLim[1] <= 0)) {
 			console.log("One of the limits is negative. This is not allowed in logarithmic scale.");
 			console.log("Will set horizontal limits to (0.1, 10)");
@@ -1419,7 +1419,7 @@ GLayer.prototype.setYLog = function(yLog) {
 		this.updatePlotPoints();
 		this.updateInsideList();
 
-		if ( typeof this.hist != "undefined") {
+		if ( typeof this.hist !== "undefined") {
 			this.hist.setPlotPoints(this.plotPoints);
 		}
 	}
@@ -1444,7 +1444,7 @@ GLayer.prototype.setPoints = function(points) {
 	this.updatePlotPoints();
 	this.updateInsideList();
 
-	if ( typeof this.hist != "undefined") {
+	if ( typeof this.hist !== "undefined") {
 		this.hist.setPlotPoints(this.plotPoints);
 	}
 };
@@ -1453,17 +1453,17 @@ GLayer.prototype.setPoint = function() {
 	var index, x, y, label;
 	var nPoints = this.points.length;
 
-	if (arguments.length == 4) {
+	if (arguments.length === 4) {
 		index = arguments[0];
 		x = arguments[1];
 		y = arguments[2];
 		label = arguments[3];
-	} else if (arguments.length == 3) {
+	} else if (arguments.length === 3) {
 		index = arguments[0];
 		x = arguments[1];
 		y = arguments[2];
 		label = (index < nPoins) ? this.points[index].getLabel() : "";
-	} else if (arguments.length == 2) {
+	} else if (arguments.length === 2) {
 		index = arguments[0];
 		x = arguments[1].getX();
 		y = arguments[1].getY();
@@ -1476,7 +1476,7 @@ GLayer.prototype.setPoint = function() {
 		this.points[index].set(x, y, label);
 		this.plotPoints[index].set(this.valueToXPlot(x), this.valueToYPlot(y), label);
 		this.inside[index] = this.isInside(this.plotPoints[index]);
-	} else if (index == nPoints) {
+	} else if (index === nPoints) {
 		this.points[index] = new GPoint(x, y, label);
 		this.plotPoints[index] = new GPoint(this.valueToXPlot(x), this.valueToYPlot(y), label);
 		this.inside[index] = this.isInside(this.plotPoints[index]);
@@ -1484,7 +1484,7 @@ GLayer.prototype.setPoint = function() {
 		throw new Error("GLayer.setPoint(): the index position is outside the array size");
 	}
 
-	if ( typeof this.hist != "undefined") {
+	if ( typeof this.hist !== "undefined") {
 		this.hist.setPlotPoint(index, this.plotPoints[index]);
 	}
 };
@@ -1492,15 +1492,15 @@ GLayer.prototype.setPoint = function() {
 GLayer.prototype.addPoint = function() {
 	var x, y, label;
 
-	if (arguments.length == 3) {
+	if (arguments.length === 3) {
 		x = arguments[0];
 		y = arguments[1];
 		label = arguments[2];
-	} else if (arguments.length == 2) {
+	} else if (arguments.length === 2) {
 		x = arguments[0];
 		y = arguments[1];
 		label = "";
-	} else if (arguments.length == 1) {
+	} else if (arguments.length === 1) {
 		x = arguments[0].getX();
 		y = arguments[0].getY();
 		label = arguments[0].getLabel();
@@ -1512,7 +1512,7 @@ GLayer.prototype.addPoint = function() {
 	this.plotPoints.push(new GPoint(this.valueToXPlot(x), this.valueToYPlot(y), label));
 	this.inside.push(this.isInside(this.plotPoints[this.plotPoints.length - 1]));
 
-	if ( typeof this.hist != "undefined") {
+	if ( typeof this.hist !== "undefined") {
 		this.hist.addPlotPoint(this.plotPoints[this.plotPoints.length - 1]);
 	}
 };
@@ -1528,7 +1528,7 @@ GLayer.prototype.addPoints = function(newPoints) {
 		this.inside.push(this.isInside(this.plotPoints[this.plotPoints.length - 1]));
 	}
 
-	if ( typeof this.hist != "undefined") {
+	if ( typeof this.hist !== "undefined") {
 		this.hist.setPlotPoints(this.plotPoints);
 	}
 };
@@ -1536,17 +1536,17 @@ GLayer.prototype.addPoints = function(newPoints) {
 GLayer.prototype.addPointAtIndexPos = function() {
 	var index, x, y, label;
 
-	if (arguments.length == 4) {
+	if (arguments.length === 4) {
 		index = arguments[0];
 		x = arguments[1];
 		y = arguments[2];
 		label = arguments[3];
-	} else if (arguments.length == 3) {
+	} else if (arguments.length === 3) {
 		index = arguments[0];
 		x = arguments[1];
 		y = arguments[2];
 		label = "";
-	} else if (arguments.length == 2) {
+	} else if (arguments.length === 2) {
 		index = arguments[0];
 		x = arguments[1].getX();
 		y = arguments[1].getY();
@@ -1560,7 +1560,7 @@ GLayer.prototype.addPointAtIndexPos = function() {
 		this.plotPoints.splice(index, 0, new GPoint(this.valueToXPlot(x), this.valueToYPlot(y), label));
 		this.inside.splice(index, 0, this.isInside(this.plotPoints[0]));
 
-		if ( typeof this.hist != "undefined") {
+		if ( typeof this.hist !== "undefined") {
 			this.hist.setPlotPoints(this.plotPoints);
 		}
 	}
@@ -1572,14 +1572,14 @@ GLayer.prototype.removePoint = function(index) {
 		this.plotPoints.splice(index, 1);
 		this.inside.splice(index, 1);
 
-		if ( typeof this.hist != "undefined") {
+		if ( typeof this.hist !== "undefined") {
 			this.hist.removePlotPoint(index);
 		}
 	}
 };
 
 GLayer.prototype.setInside = function(inside) {
-	if (inside.length == this.inside.length) {
+	if (inside.length === this.inside.length) {
 		this.inside = inside.slice();
 	}
 };
@@ -1619,19 +1619,19 @@ GLayer.prototype.setHistBasePoint = function(histBasePoint) {
 };
 
 GLayer.prototype.setHistType = function(histType) {
-	if ( typeof this.hist != "undefined") {
+	if ( typeof this.hist !== "undefined") {
 		this.hist.setType(histType);
 	}
 };
 
 GLayer.prototype.setHistVisible = function(visible) {
-	if ( typeof this.hist != "undefined") {
+	if ( typeof this.hist !== "undefined") {
 		this.hist.setVisible(visible);
 	}
 };
 
 GLayer.prototype.setDrawHistLabels = function(drawHistLabels) {
-	if ( typeof this.hist != "undefined") {
+	if ( typeof this.hist !== "undefined") {
 		this.hist.setDrawLabels(drawHistLabels);
 	}
 };
@@ -1670,7 +1670,7 @@ GLayer.prototype.setFontProperties = function(fontName, fontColor, fontSize) {
 GLayer.prototype.setAllFontProperties = function(fontName, fontColor, fontSize) {
 	this.setFontProperties(fontName, fontColor, fontSize);
 
-	if ( typeof this.hist != "undefined") {
+	if ( typeof this.hist !== "undefined") {
 		this.hist.setFontProperties(fontName, fontColor, fontSize);
 	}
 };

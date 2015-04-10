@@ -265,7 +265,7 @@ GAxis.prototype.updateTickLabels = function() {
 
 			if (tick % 1 === 0) {
 				this.tickLabels[i] = "" + Math.round(tick);
-			} else if ( typeof this.ticksPrecision != "undefined" && this.ticksPrecision >= 0) {
+			} else if ( typeof this.ticksPrecision !== "undefined" && this.ticksPrecision >= 0) {
 				this.tickLabels[i] = "" + parseFloat(tick).toFixed(this.ticksPrecision);
 			} else {
 				this.tickLabels[i] = "" + tick;
@@ -275,7 +275,7 @@ GAxis.prototype.updateTickLabels = function() {
 };
 
 GAxis.prototype.moveLim = function(newLim) {
-	if (newLim[1] != newLim[0]) {
+	if (newLim[1] !== newLim[0]) {
 		// Check that the new limit makes sense
 		if (this.log && (newLim[0] <= 0 || newLim[1] <= 0)) {
 			console.log("The limits are negative. This is not allowed in logarithmic scale.");
@@ -302,13 +302,13 @@ GAxis.prototype.moveLim = function(newLim) {
 							sigDigits++;
 						}
 					} else {
-						step = (n == 1) ? this.lim[1] - this.lim[0] : this.ticks[1] - this.ticks[0];
+						step = (n === 1) ? this.lim[1] - this.lim[0] : this.ticks[1] - this.ticks[0];
 						sigDigits = this.obtainSigDigits(step);
 						step = this.roundPlus(step, sigDigits);
 
 						if (step === 0 || Math.abs(step) > Math.abs(this.lim[1] - this.lim[0])) {
 							sigDigits++;
-							step = (n == 1) ? this.lim[1] - this.lim[0] : this.ticks[1] - this.ticks[0];
+							step = (n === 1) ? this.lim[1] - this.lim[0] : this.ticks[1] - this.ticks[0];
 							step = this.roundPlus(step, sigDigits);
 						}
 
@@ -334,7 +334,7 @@ GAxis.prototype.moveLim = function(newLim) {
 					}
 
 					// A sanity check
-					if (this.ticksPrecision != sigDigits) {
+					if (this.ticksPrecision !== sigDigits) {
 						console.log("There is a problem in the axis ticks precision calculation");
 					}
 				}
@@ -610,10 +610,10 @@ GAxis.prototype.drawAsRightAxis = function() {
 GAxis.prototype.setDim = function() {
 	var xDim, yDim;
 
-	if (arguments.length == 2) {
+	if (arguments.length === 2) {
 		xDim = arguments[0];
 		yDim = arguments[1];
-	} else if (arguments.length == 1) {
+	} else if (arguments.length === 1) {
 		xDim = arguments[0][0];
 		yDim = arguments[0][1];
 	} else {
@@ -629,7 +629,7 @@ GAxis.prototype.setDim = function() {
 };
 
 GAxis.prototype.setLim = function(lim) {
-	if (lim[1] != lim[0]) {
+	if (lim[1] !== lim[0]) {
 		// Make sure the new limits makes sense
 		if (this.log && (lim[0] <= 0 || lim[1] <= 0)) {
 			console.log("One of the limits is negative. This is not allowed in logarithmic scale.");
@@ -649,7 +649,7 @@ GAxis.prototype.setLim = function(lim) {
 };
 
 GAxis.prototype.setLimAndLog = function(lim, log) {
-	if (lim[1] != lim[0]) {
+	if (lim[1] !== lim[0]) {
 		// Make sure the new limits makes sense
 		if (log && (lim[0] <= 0 || lim[1] <= 0)) {
 			console.log("One of the limits is negative. This is not allowed in logarithmic scale.");
@@ -670,7 +670,7 @@ GAxis.prototype.setLimAndLog = function(lim, log) {
 };
 
 GAxis.prototype.setLog = function(log) {
-	if (log != this.log) {
+	if (log !== this.log) {
 		this.log = log;
 
 		// Check if the old limits still make sense
@@ -757,7 +757,7 @@ GAxis.prototype.setTicks = function(ticks) {
 };
 
 GAxis.prototype.setTickLabels = function(tickLabels) {
-	if (tickLabels.length == this.tickLabels.length) {
+	if (tickLabels.length === this.tickLabels.length) {
 		for (var i = 0; i < this.tickLabels.length; i++) {
 			this.tickLabels[i] = tickLabels[i];
 		}
@@ -770,7 +770,7 @@ GAxis.prototype.setTickLabels = function(tickLabels) {
 };
 
 GAxis.prototype.setFixedTicks = function(fixedTicks) {
-	if (fixedTicks != this.fixedTicks) {
+	if (fixedTicks !== this.fixedTicks) {
 		this.fixedTicks = fixedTicks;
 
 		if (!this.fixedTicks) {
@@ -791,7 +791,7 @@ GAxis.prototype.setSmallTickLength = function(smallTickLength) {
 };
 
 GAxis.prototype.setExpTickLabels = function(expTickLabels) {
-	if (expTickLabels != this.expTickLabels) {
+	if (expTickLabels !== this.expTickLabels) {
 		this.expTickLabels = expTickLabels;
 		this.updateTickLabels();
 	}

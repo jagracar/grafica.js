@@ -1,5 +1,5 @@
 /*
- * Axis class.
+ * Axis class. 
  */
 function GAxis(parent, type, dim, lim, log) {
 	// The parent processing object

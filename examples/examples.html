@@ -1,66 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="keywords"
-		content="processing, p5.js, P5js, grafica, grafica.js, javaScript, examples">
-		<meta name="description" content="grafica.js examples">
-		<meta name="author" content="Javier Graciá Carpio">
-		<title>grafica.js examples</title>
-	</head>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords"
+	content="processing, p5.js, P5js, grafica, grafica.js, javaScript, examples">
+<meta name="description" content="grafica.js examples">
+<meta name="author" content="Javier Graciá Carpio">
+<title>grafica.js examples</title>
+</head>
 
-	<body>
-		<h1>grafica.js</h1>
+<body>
+	<h1>grafica.js</h1>
 
-		<p>
-			Some basic examples showing the grafica.js library capabilities:
-		</p>
-	
-		<ul>
-			<li onclick="runSketch(defaultPlotSketch);">
-				Default plot example
-			</li>
-			<li onclick="runSketch(multiplePlotsSketch);">
-				Multiple plots example
-			</li>
-			<li onclick="runSketch(multiplePanelsSketch);">
-				Multiple panels example
-			</li>
-			<li onclick="runSketch(exponentialTrendSketch);">
-				Exponential
-				trend example
-			</li>
-			<li onclick="runSketch(movingPointsSketch);">
-				Moving points example
-			</li>
-			<li onclick="runSketch(oktoberfestSketch);">
-				Oktoberfest example
-			</li>
-		</ul>
+	<p>Some basic examples showing the grafica.js library capabilities:
+	</p>
 
-		<div id="sketchContainer"></div>
+	<ul>
+		<li onclick="runSketch(defaultPlotSketch);">Default plot example
+		</li>
+		<li onclick="runSketch(multiplePlotsSketch);">Multiple plots
+			example</li>
+		<li onclick="runSketch(multiplePanelsSketch);">Multiple panels
+			example</li>
+		<li onclick="runSketch(exponentialTrendSketch);">Exponential
+			trend example</li>
+		<li onclick="runSketch(movingPointsSketch);">Moving points
+			example</li>
+		<li onclick="runSketch(oktoberfestSketch);">Oktoberfest example</li>
+		<li onclick="runSketch(twoVerticalAxisSketch);">Two vertical axis
+			example</li>
+	</ul>
 
-		<!-- JavaScript files -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.3/p5.min.js"></script>
-		<script src="grafica.min.js"></script>
-		<script src="defaultPlot.js"></script>
-		<script src="multiplePlots.js"></script>
-		<script src="multiplePanels.js"></script>
-		<script src="exponentialTrend.js"></script>
-		<script src="movingPoints.js"></script>
-		<script src="oktoberfest.js"></script>
-		<script>
-			// This is the sketch launcher
-			var p5Sketch;
+	<div id="sketchContainer"></div>
 
-			function runSketch(sketch) {
-				if ( typeof p5Sketch !== 'undefined') {
-					p5Sketch.remove();
-				}
+	<!-- JavaScript files -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.3/p5.min.js"></script>
+	<script src="grafica.min.js"></script>
+	<script src="defaultPlot.js"></script>
+	<script src="multiplePlots.js"></script>
+	<script src="multiplePanels.js"></script>
+	<script src="exponentialTrend.js"></script>
+	<script src="movingPoints.js"></script>
+	<script src="oktoberfest.js"></script>
+	<script src="twoVerticalAxis.js"></script>
+	<script>
+		// This is the sketch launcher
+		var p5Sketch;
 
-				p5Sketch = new p5(sketch, "sketchContainer");
+		function runSketch(sketch) {
+			if (typeof p5Sketch !== 'undefined') {
+				p5Sketch.remove();
 			}
-		</script>
-	</body>
+
+			p5Sketch = new p5(sketch, "sketchContainer");
+		}
+	</script>
+</body>

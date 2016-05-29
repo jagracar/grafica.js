@@ -252,17 +252,20 @@ GLayer.prototype.getPointIndexAtPlotPos = function(xPlot, yPlot) {
 
 	if (this.isInside(xPlot, yPlot)) {
 		var point, distSq;
-		var minDistSq = 25;
+		var minDistSq = Number.MAX_VALUE;
 		var nPoints = this.plotPoints.length;
+		var nSizes = this.pointSizes.length;
 
 		for (var i = 0; i < nPoints; i++) {
 			if (this.inside[i]) {
 				point = this.plotPoints[i];
 				distSq = Math.pow(point.getX() - xPlot, 2) + Math.pow(point.getY() - yPlot, 2);
 
-				if (distSq < minDistSq) {
-					minDistSq = distSq;
-					pointIndex = i;
+				if (distSq < Math.max(Math.pow(this.pointSizes[i % nSizes] / 2.0, 2), 25)) {
+					if (distSq < minDistSq) {
+						minDistSq = distSq;
+						pointIndex = i;
+					}
 				}
 			}
 		}

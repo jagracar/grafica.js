@@ -1,4 +1,4 @@
-var twoVerticalAxisSketch = function(p) {
+var twoVerticalAxesSketch = function(p) {
 	// Global variables
 	var plot1, plot2;
 

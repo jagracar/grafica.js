@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/jagracar/grafica.js.git"
   },
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A simple and configurable plotting library for p5.js",
   "keywords": [
     "math",

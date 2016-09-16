@@ -360,7 +360,7 @@ GLayer.prototype.obtainBoxIntersections = function(plotPoint1, plotPoint2) {
 					if (nCuts === 0) {
 						nCuts = 1;
 						this.cuts[0][0] = pointInside.getX();
-						this.cuts[1][0] = pointInside.getY();
+						this.cuts[0][1] = pointInside.getY();
 					}
 				}
 			} else {

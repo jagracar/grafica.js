@@ -52,6 +52,7 @@ var twoVerticalAxesSketch = function(p) {
 
 		// Draw the plot
 		plot1.beginDraw();
+		plot1.drawBackground();
 		plot1.drawBox();
 		plot1.drawXAxis();
 		plot1.drawYAxis();

@@ -608,7 +608,7 @@ GLayer.prototype.drawLines = function() {
 };
 
 GLayer.prototype.drawLine = function() {
-	var point1, point2, lc, lw, slope, ycut;
+	var point1, point2, lc, lw, slope, yCut;
 
 	if (arguments.length === 4 && arguments[0] instanceof GPoint) {
 		point1 = arguments[0];
@@ -617,7 +617,7 @@ GLayer.prototype.drawLine = function() {
 		lw = arguments[3];
 	} else if (arguments.length === 4) {
 		slope = arguments[0];
-		ycut = arguments[1];
+		yCut = arguments[1];
 		lc = arguments[2];
 		lw = arguments[3];
 	} else if (arguments.length === 2 && arguments[0] instanceof GPoint) {
@@ -627,7 +627,7 @@ GLayer.prototype.drawLine = function() {
 		lw = this.lineWidth;
 	} else if (arguments.length === 2) {
 		slope = arguments[0];
-		ycut = arguments[1];
+		yCut = arguments[1];
 		lc = this.lineColor;
 		lw = this.lineWidth;
 	} else {
@@ -1465,7 +1465,7 @@ GLayer.prototype.setPoint = function() {
 		index = arguments[0];
 		x = arguments[1];
 		y = arguments[2];
-		label = (index < nPoins) ? this.points[index].getLabel() : "";
+		label = (index < nPoints) ? this.points[index].getLabel() : "";
 	} else if (arguments.length === 2) {
 		index = arguments[0];
 		x = arguments[1].getX();

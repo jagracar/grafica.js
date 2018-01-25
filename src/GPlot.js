@@ -1474,19 +1474,19 @@ GPlot.prototype.setVerticalAxesTicks = function(ticks) {
 };
 
 GPlot.prototype.setFontName = function(fontName) {
-	this.maniLayer.setFontName(fontName);
+	this.mainLayer.setFontName(fontName);
 };
 
 GPlot.prototype.setFontColor = function(fontColor) {
-	this.maniLayer.setFontColor(fontColor);
+	this.mainLayer.setFontColor(fontColor);
 };
 
 GPlot.prototype.setFontSize = function(fontSize) {
-	this.maniLayer.setFontSize(fontSize);
+	this.mainLayer.setFontSize(fontSize);
 };
 
 GPlot.prototype.setFontProperties = function(fontName, fontColor, fontSize) {
-	this.maniLayer.setFontProperties(fontName, fontColor, fontSize);
+	this.mainLayer.setFontProperties(fontName, fontColor, fontSize);
 };
 
 GPlot.prototype.setAllFontProperties = function(fontName, fontColor, fontSize) {

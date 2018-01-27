@@ -1595,7 +1595,7 @@ GHistogram.prototype.setPlotPoints = function(plotPoints) {
 			this.plotPoints[i].set(plotPoints[i]);
 		}
 
-		for ( i = this.plotPoints.length; i < nPoints; i++) {
+		for ( i = this.plotPoints.lengh; i < nPoints; i++) {
 			this.plotPoints[i] = new GPoint(plotPoints[i]);
 		}
 	}
@@ -2053,7 +2053,7 @@ GLayer.prototype.obtainBoxIntersections = function(plotPoint1, plotPoint2) {
 					if (nCuts === 0) {
 						nCuts = 1;
 						this.cuts[0][0] = pointInside.getX();
-						this.cuts[0][1] = pointInside.getY();
+						this.cuts[1][0] = pointInside.getY();
 					}
 				}
 			} else {
@@ -2301,7 +2301,7 @@ GLayer.prototype.drawLines = function() {
 };
 
 GLayer.prototype.drawLine = function() {
-	var point1, point2, lc, lw, slope, yCut;
+	var point1, point2, lc, lw, slope, ycut;
 
 	if (arguments.length === 4 && arguments[0] instanceof GPoint) {
 		point1 = arguments[0];
@@ -2310,7 +2310,7 @@ GLayer.prototype.drawLine = function() {
 		lw = arguments[3];
 	} else if (arguments.length === 4) {
 		slope = arguments[0];
-		yCut = arguments[1];
+		ycut = arguments[1];
 		lc = arguments[2];
 		lw = arguments[3];
 	} else if (arguments.length === 2 && arguments[0] instanceof GPoint) {
@@ -2320,7 +2320,7 @@ GLayer.prototype.drawLine = function() {
 		lw = this.lineWidth;
 	} else if (arguments.length === 2) {
 		slope = arguments[0];
-		yCut = arguments[1];
+		ycut = arguments[1];
 		lc = this.lineColor;
 		lw = this.lineWidth;
 	} else {
@@ -3158,7 +3158,7 @@ GLayer.prototype.setPoint = function() {
 		index = arguments[0];
 		x = arguments[1];
 		y = arguments[2];
-		label = (index < nPoints) ? this.points[index].getLabel() : "";
+		label = (index < nPoins) ? this.points[index].getLabel() : "";
 	} else if (arguments.length === 2) {
 		index = arguments[0];
 		x = arguments[1].getX();
@@ -4001,7 +4001,7 @@ GPlot.prototype.centerAndZoom = function(factor, xValue, yValue) {
 	this.xAxis.setLim(this.xLim);
 	this.topAxis.setLim(this.xLim);
 	this.yAxis.setLim(this.yLim);
-	this.rightAxis.setLim(this.yLim);
+	this.rightAxis.setLim(yLim);
 
 	// Update the plot limits (the layers, because the limits are fixed)
 	this.updateLimits();
@@ -4355,7 +4355,8 @@ GPlot.prototype.drawLegend = function(text, xRelativePos, yRelativePos) {
 		} else {
 			this.parent.fill(this.layerList[i - 1].getLineColor());
 			this.parent.rect(plotPosition[0], plotPosition[1], rectSize, rectSize);
-			this.layerList[i - i].drawAnnotation(text[i], position[0], position[1], this.parent.LEFT, this.parent.CENTER);
+			this.layerList[i - i].drawAnnotation(text[i], position[0], position[1], this.parent.LEFT,
+					this.parent.CENTER);
 		}
 	}
 
@@ -4904,19 +4905,19 @@ GPlot.prototype.setVerticalAxesTicks = function(ticks) {
 };
 
 GPlot.prototype.setFontName = function(fontName) {
-	this.mainLayer.setFontName(fontName);
+	this.maniLayer.setFontName(fontName);
 };
 
 GPlot.prototype.setFontColor = function(fontColor) {
-	this.mainLayer.setFontColor(fontColor);
+	this.maniLayer.setFontColor(fontColor);
 };
 
 GPlot.prototype.setFontSize = function(fontSize) {
-	this.mainLayer.setFontSize(fontSize);
+	this.maniLayer.setFontSize(fontSize);
 };
 
 GPlot.prototype.setFontProperties = function(fontName, fontColor, fontSize) {
-	this.mainLayer.setFontProperties(fontName, fontColor, fontSize);
+	this.maniLayer.setFontProperties(fontName, fontColor, fontSize);
 };
 
 GPlot.prototype.setAllFontProperties = function(fontName, fontColor, fontSize) {
@@ -4928,7 +4929,7 @@ GPlot.prototype.setAllFontProperties = function(fontName, fontColor, fontSize) {
 
 	this.mainLayer.setAllFontProperties(fontName, fontColor, fontSize);
 
-	for (var i = 0; i < this.layerList.length; i++) {
+	for (var i = 0; i < layerList.length; i++) {
 		this.layerList[i].setAllFontProperties(fontName, fontColor, fontSize);
 	}
 };

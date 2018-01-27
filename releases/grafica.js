@@ -1595,7 +1595,7 @@ GHistogram.prototype.setPlotPoints = function(plotPoints) {
 			this.plotPoints[i].set(plotPoints[i]);
 		}
 
-		for ( i = this.plotPoints.lengh; i < nPoints; i++) {
+		for ( i = this.plotPoints.length; i < nPoints; i++) {
 			this.plotPoints[i] = new GPoint(plotPoints[i]);
 		}
 	}
@@ -1945,17 +1945,20 @@ GLayer.prototype.getPointIndexAtPlotPos = function(xPlot, yPlot) {
 
 	if (this.isInside(xPlot, yPlot)) {
 		var point, distSq;
-		var minDistSq = 25;
+		var minDistSq = Number.MAX_VALUE;
 		var nPoints = this.plotPoints.length;
+		var nSizes = this.pointSizes.length;
 
 		for (var i = 0; i < nPoints; i++) {
 			if (this.inside[i]) {
 				point = this.plotPoints[i];
 				distSq = Math.pow(point.getX() - xPlot, 2) + Math.pow(point.getY() - yPlot, 2);
 
-				if (distSq < minDistSq) {
-					minDistSq = distSq;
-					pointIndex = i;
+				if (distSq < Math.max(Math.pow(this.pointSizes[i % nSizes] / 2.0, 2), 25)) {
+					if (distSq < minDistSq) {
+						minDistSq = distSq;
+						pointIndex = i;
+					}
 				}
 			}
 		}
@@ -2050,7 +2053,7 @@ GLayer.prototype.obtainBoxIntersections = function(plotPoint1, plotPoint2) {
 					if (nCuts === 0) {
 						nCuts = 1;
 						this.cuts[0][0] = pointInside.getX();
-						this.cuts[1][0] = pointInside.getY();
+						this.cuts[0][1] = pointInside.getY();
 					}
 				}
 			} else {
@@ -2298,7 +2301,7 @@ GLayer.prototype.drawLines = function() {
 };
 
 GLayer.prototype.drawLine = function() {
-	var point1, point2, lc, lw, slope, ycut;
+	var point1, point2, lc, lw, slope, yCut;
 
 	if (arguments.length === 4 && arguments[0] instanceof GPoint) {
 		point1 = arguments[0];
@@ -2307,7 +2310,7 @@ GLayer.prototype.drawLine = function() {
 		lw = arguments[3];
 	} else if (arguments.length === 4) {
 		slope = arguments[0];
-		ycut = arguments[1];
+		yCut = arguments[1];
 		lc = arguments[2];
 		lw = arguments[3];
 	} else if (arguments.length === 2 && arguments[0] instanceof GPoint) {
@@ -2317,7 +2320,7 @@ GLayer.prototype.drawLine = function() {
 		lw = this.lineWidth;
 	} else if (arguments.length === 2) {
 		slope = arguments[0];
-		ycut = arguments[1];
+		yCut = arguments[1];
 		lc = this.lineColor;
 		lw = this.lineWidth;
 	} else {
@@ -3155,7 +3158,7 @@ GLayer.prototype.setPoint = function() {
 		index = arguments[0];
 		x = arguments[1];
 		y = arguments[2];
-		label = (index < nPoins) ? this.points[index].getLabel() : "";
+		label = (index < nPoints) ? this.points[index].getLabel() : "";
 	} else if (arguments.length === 2) {
 		index = arguments[0];
 		x = arguments[1].getX();
@@ -3456,14 +3459,15 @@ function GPlot() {
 
 	// The parent processing object
 	this.parent = parent;
+	this.parentElt = this.parent._renderer.elt;
 
 	// General properties
-	this.pos = [xPos, yPos];
-	this.outerDim = [plotWidth, plotHeight];
-	this.mar = [60, 70, 40, 30];
-	this.dim = [this.outerDim[0] - this.mar[1] - this.mar[3], this.outerDim[1] - this.mar[0] - this.mar[2]];
-	this.xLim = [0, 1];
-	this.yLim = [0, 1];
+	this.pos = [ xPos, yPos ];
+	this.outerDim = [ plotWidth, plotHeight ];
+	this.mar = [ 60, 70, 40, 30 ];
+	this.dim = [ this.outerDim[0] - this.mar[1] - this.mar[3], this.outerDim[1] - this.mar[0] - this.mar[2] ];
+	this.xLim = [ 0, 1 ];
+	this.yLim = [ 0, 1 ];
 	this.fixedXLim = false;
 	this.fixedYLim = false;
 	this.xLog = false;
@@ -3518,12 +3522,13 @@ function GPlot() {
 	this.yLimReset = undefined;
 
 	// Add the event listeners
-	window.addEventListener("click", this.clickEvent.bind(this), false);
-	window.addEventListener("mousedown", this.mouseDownEvent.bind(this), false);
-	window.addEventListener("touchstart", this.mouseDownEvent.bind(this), false);
-	window.addEventListener("mouseup", this.mouseUpEvent.bind(this), false);
-	window.addEventListener("touchend", this.mouseUpEvent.bind(this), false);
-	window.addEventListener("wheel", this.wheelEvent.bind(this), false);
+	//document.addEventListener("click", this.clickEvent.bind(this), false);
+	this.parentElt.addEventListener("mousedown", this.mouseDownEvent.bind(this), false);
+	this.parentElt.addEventListener("mouseup", this.mouseUpEvent.bind(this), false);
+	this.parentElt.addEventListener("touchstart", this.touchStartEvent.bind(this), false);
+	this.parentElt.addEventListener("touchend", this.touchEndEvent.bind(this), false);
+	this.parentElt.addEventListener("touchcancel", this.touchEndEvent.bind(this), false);
+	this.parentElt.addEventListener("wheel", this.wheelEvent.bind(this), false);
 }
 
 // Constants
@@ -3586,7 +3591,7 @@ GPlot.prototype.removeLayer = function(id) {
 		}
 	}
 
-	if ( typeof index !== "undefined") {
+	if (typeof index !== "undefined") {
 		this.layerList.splice(index, 1);
 
 		// Calculate and update the new plot limits if necessary
@@ -3602,14 +3607,14 @@ GPlot.prototype.getPlotPosAt = function(xScreen, yScreen) {
 	var xPlot = xScreen - (this.pos[0] + this.mar[1]);
 	var yPlot = yScreen - (this.pos[1] + this.mar[2] + this.dim[1]);
 
-	return [xPlot, yPlot];
+	return [ xPlot, yPlot ];
 };
 
 GPlot.prototype.getScreenPosAtValue = function(xValue, yValue) {
 	var xScreen = this.mainLayer.valueToXPlot(xValue) + (this.pos[0] + this.mar[1]);
 	var yScreen = this.mainLayer.valueToYPlot(yValue) + (this.pos[1] + this.mar[2] + this.dim[1]);
 
-	return [xScreen, yScreen];
+	return [ xScreen, yScreen ];
 };
 
 GPlot.prototype.getPointAt = function() {
@@ -3668,7 +3673,7 @@ GPlot.prototype.removePointAt = function() {
 	var plotPos = this.getPlotPosAt(xScreen, yScreen);
 	var pointIndex = this.getLayer(layerId).getPointIndexAtPlotPos(plotPos[0], plotPos[1]);
 
-	if ( typeof pointIndex !== "undefined") {
+	if (typeof pointIndex !== "undefined") {
 		this.removePoint(pointIndex, layerId);
 	}
 };
@@ -3680,7 +3685,7 @@ GPlot.prototype.getValueAt = function(xScreen, yScreen) {
 
 GPlot.prototype.getRelativePlotPosAt = function(xScreen, yScreen) {
 	var plotPos = this.getPlotPosAt(xScreen, yScreen);
-	return [plotPos[0] / this.dim[0], -plotPos[1] / this.dim[1]];
+	return [ plotPos[0] / this.dim[0], -plotPos[1] / this.dim[1] ];
 };
 
 GPlot.prototype.isOverPlot = function() {
@@ -3746,8 +3751,8 @@ GPlot.prototype.calculatePlotXLim = function() {
 		for (var i = 0; i < this.layerList.length; i++) {
 			var newLim = this.calculatePointsXLim(this.layerList[i].getPointsRef());
 
-			if ( typeof newLim !== "undefined") {
-				if ( typeof lim !== "undefined") {
+			if (typeof newLim !== "undefined") {
+				if (typeof lim !== "undefined") {
 					lim[0] = Math.min(lim[0], newLim[0]);
 					lim[1] = Math.max(lim[1], newLim[1]);
 				} else {
@@ -3757,7 +3762,7 @@ GPlot.prototype.calculatePlotXLim = function() {
 		}
 	}
 
-	if ( typeof lim !== "undefined") {
+	if (typeof lim !== "undefined") {
 		// Expand the axis limits a bit
 		var delta = (lim[0] === 0) ? 0.1 : 0.1 * lim[0];
 
@@ -3778,7 +3783,7 @@ GPlot.prototype.calculatePlotXLim = function() {
 		}
 	} else {
 		if (this.xLog && (this.xLim[0] <= 0 || this.xLim[1] <= 0)) {
-			lim = [0.1, 10];
+			lim = [ 0.1, 10 ];
 		} else {
 			lim = this.xLim.slice();
 		}
@@ -3786,7 +3791,7 @@ GPlot.prototype.calculatePlotXLim = function() {
 
 	// Invert the limits if necessary
 	if (this.invertedXScale && lim[0] < lim[1]) {
-		lim = [lim[1], lim[0]];
+		lim = [ lim[1], lim[0] ];
 	}
 
 	return lim;
@@ -3801,8 +3806,8 @@ GPlot.prototype.calculatePlotYLim = function() {
 		for (var i = 0; i < this.layerList.length; i++) {
 			var newLim = this.calculatePointsYLim(this.layerList[i].getPointsRef());
 
-			if ( typeof newLim !== "undefined") {
-				if ( typeof lim !== "undefined") {
+			if (typeof newLim !== "undefined") {
+				if (typeof lim !== "undefined") {
 					lim[0] = Math.min(lim[0], newLim[0]);
 					lim[1] = Math.max(lim[1], newLim[1]);
 				} else {
@@ -3812,7 +3817,7 @@ GPlot.prototype.calculatePlotYLim = function() {
 		}
 	}
 
-	if ( typeof lim !== "undefined") {
+	if (typeof lim !== "undefined") {
 		// Expand the axis limits a bit
 		var delta = (lim[0] === 0) ? 0.1 : 0.1 * lim[0];
 
@@ -3833,7 +3838,7 @@ GPlot.prototype.calculatePlotYLim = function() {
 		}
 	} else {
 		if (this.yLog && (this.yLim[0] <= 0 || this.yLim[1] <= 0)) {
-			lim = [0.1, 10];
+			lim = [ 0.1, 10 ];
 		} else {
 			lim = this.yLim.slice();
 		}
@@ -3841,7 +3846,7 @@ GPlot.prototype.calculatePlotYLim = function() {
 
 	// Invert the limits if necessary
 	if (this.invertedYScale && lim[0] < lim[1]) {
-		lim = [lim[1], lim[0]];
+		lim = [ lim[1], lim[0] ];
 	}
 
 	return lim;
@@ -3849,7 +3854,7 @@ GPlot.prototype.calculatePlotYLim = function() {
 
 GPlot.prototype.calculatePointsXLim = function(points) {
 	// Find the points limits
-	var lim = [Number.MAX_VALUE, -Number.MAX_VALUE];
+	var lim = [ Number.MAX_VALUE, -Number.MAX_VALUE ];
 
 	for (var i = 0; i < points.length; i++) {
 		if (points[i].isValid()) {
@@ -3885,7 +3890,7 @@ GPlot.prototype.calculatePointsXLim = function(points) {
 
 GPlot.prototype.calculatePointsYLim = function(points) {
 	// Find the points limits
-	var lim = [Number.MAX_VALUE, -Number.MAX_VALUE];
+	var lim = [ Number.MAX_VALUE, -Number.MAX_VALUE ];
 
 	for (var i = 0; i < points.length; i++) {
 		if (points[i].isValid()) {
@@ -3974,18 +3979,18 @@ GPlot.prototype.centerAndZoom = function(factor, xValue, yValue) {
 
 	if (this.xLog) {
 		deltaLim = Math.exp(Math.log(this.xLim[1] / this.xLim[0]) / (2 * factor));
-		this.xLim = [xValue / deltaLim, xValue * deltaLim];
+		this.xLim = [ xValue / deltaLim, xValue * deltaLim ];
 	} else {
 		deltaLim = (this.xLim[1] - this.xLim[0]) / (2 * factor);
-		this.xLim = [xValue - deltaLim, xValue + deltaLim];
+		this.xLim = [ xValue - deltaLim, xValue + deltaLim ];
 	}
 
 	if (this.yLog) {
 		deltaLim = Math.exp(Math.log(this.yLim[1] / this.yLim[0]) / (2 * factor));
-		this.yLim = [yValue / deltaLim, yValue * deltaLim];
+		this.yLim = [ yValue / deltaLim, yValue * deltaLim ];
 	} else {
 		deltaLim = (this.yLim[1] - this.yLim[0]) / (2 * factor);
-		this.yLim = [yValue - deltaLim, yValue + deltaLim];
+		this.yLim = [ yValue - deltaLim, yValue + deltaLim ];
 	}
 
 	// Fix the limits
@@ -3996,7 +4001,7 @@ GPlot.prototype.centerAndZoom = function(factor, xValue, yValue) {
 	this.xAxis.setLim(this.xLim);
 	this.topAxis.setLim(this.xLim);
 	this.yAxis.setLim(this.yLim);
-	this.rightAxis.setLim(yLim);
+	this.rightAxis.setLim(this.yLim);
 
 	// Update the plot limits (the layers, because the limits are fixed)
 	this.updateLimits();
@@ -4016,21 +4021,21 @@ GPlot.prototype.zoom = function() {
 		if (this.xLog) {
 			deltaLim = Math.exp(Math.log(this.xLim[1] / this.xLim[0]) / (2 * factor));
 			offset = Math.exp((Math.log(this.xLim[1] / this.xLim[0]) / factor) * (0.5 - plotPos[0] / this.dim[0]));
-			this.xLim = [value[0] * offset / deltaLim, value[0] * offset * deltaLim];
+			this.xLim = [ value[0] * offset / deltaLim, value[0] * offset * deltaLim ];
 		} else {
 			deltaLim = (this.xLim[1] - this.xLim[0]) / (2 * factor);
 			offset = 2 * deltaLim * (0.5 - plotPos[0] / this.dim[0]);
-			this.xLim = [value[0] + offset - deltaLim, value[0] + offset + deltaLim];
+			this.xLim = [ value[0] + offset - deltaLim, value[0] + offset + deltaLim ];
 		}
 
 		if (this.yLog) {
 			deltaLim = Math.exp(Math.log(this.yLim[1] / this.yLim[0]) / (2 * factor));
 			offset = Math.exp((Math.log(this.yLim[1] / this.yLim[0]) / factor) * (0.5 + plotPos[1] / this.dim[1]));
-			this.yLim = [value[1] * offset / deltaLim, value[1] * offset * deltaLim];
+			this.yLim = [ value[1] * offset / deltaLim, value[1] * offset * deltaLim ];
 		} else {
 			deltaLim = (this.yLim[1] - this.yLim[0]) / (2 * factor);
 			offset = 2 * deltaLim * (0.5 + plotPos[1] / this.dim[1]);
-			this.yLim = [value[1] + offset - deltaLim, value[1] + offset + deltaLim];
+			this.yLim = [ value[1] + offset - deltaLim, value[1] + offset + deltaLim ];
 		}
 
 		// Fix the limits
@@ -4062,18 +4067,18 @@ GPlot.prototype.shiftPlotPos = function(valuePlotPos, newPlotPos) {
 
 	if (this.xLog) {
 		deltaLim = Math.exp(Math.log(this.xLim[1] / this.xLim[0]) * deltaXPlot / this.dim[0]);
-		this.xLim = [this.xLim[0] * deltaLim, this.xLim[1] * deltaLim];
+		this.xLim = [ this.xLim[0] * deltaLim, this.xLim[1] * deltaLim ];
 	} else {
 		deltaLim = (this.xLim[1] - this.xLim[0]) * deltaXPlot / this.dim[0];
-		this.xLim = [this.xLim[0] + deltaLim, this.xLim[1] + deltaLim];
+		this.xLim = [ this.xLim[0] + deltaLim, this.xLim[1] + deltaLim ];
 	}
 
 	if (this.yLog) {
 		deltaLim = Math.exp(-Math.log(this.yLim[1] / this.yLim[0]) * deltaYPlot / this.dim[1]);
-		this.yLim = [this.yLim[0] * deltaLim, this.yLim[1] * deltaLim];
+		this.yLim = [ this.yLim[0] * deltaLim, this.yLim[1] * deltaLim ];
 	} else {
 		deltaLim = -(this.yLim[1] - this.yLim[0]) * deltaYPlot / this.dim[1];
-		this.yLim = [this.yLim[0] + deltaLim, this.yLim[1] + deltaLim];
+		this.yLim = [ this.yLim[0] + deltaLim, this.yLim[1] + deltaLim ];
 	}
 
 	// Fix the limits
@@ -4114,7 +4119,7 @@ GPlot.prototype.align = function() {
 
 GPlot.prototype.center = function(xScreen, yScreen) {
 	var valuePlotPos = this.getPlotPosAt(xScreen, yScreen);
-	var newPlotPos = [this.dim[0] / 2, -this.dim[1] / 2];
+	var newPlotPos = [ this.dim[0] / 2, -this.dim[1] / 2 ];
 	this.shiftPlotPos(valuePlotPos, newPlotPos);
 };
 
@@ -4193,13 +4198,13 @@ GPlot.prototype.drawPoints = function() {
 	if (arguments.length === 1) {
 		this.mainLayer.drawPoints(arguments[0]);
 
-		for ( i = 0; i < this.layerList.length; i++) {
+		for (i = 0; i < this.layerList.length; i++) {
 			this.layerList[0].drawPoints(arguments[0]);
 		}
 	} else if (arguments.length === 0) {
 		this.mainLayer.drawPoints();
 
-		for ( i = 0; i < this.layerList.length; i++) {
+		for (i = 0; i < this.layerList.length; i++) {
 			this.layerList[i].drawPoints();
 		}
 	} else {
@@ -4296,7 +4301,7 @@ GPlot.prototype.drawGridLines = function(gridType) {
 	if (gridType === GPlot.BOTH || gridType === GPlot.VERTICAL) {
 		var xPlotTicks = this.xAxis.getPlotTicksRef();
 
-		for ( i = 0; i < xPlotTicks.length; i++) {
+		for (i = 0; i < xPlotTicks.length; i++) {
 			if (xPlotTicks[i] >= 0 && xPlotTicks[i] <= this.dim[0]) {
 				this.parent.line(xPlotTicks[i], 0, xPlotTicks[i], -this.dim[1]);
 			}
@@ -4306,7 +4311,7 @@ GPlot.prototype.drawGridLines = function(gridType) {
 	if (gridType === GPlot.BOTH || gridType === GPlot.HORIZONTAL) {
 		var yPlotTicks = this.yAxis.getPlotTicksRef();
 
-		for ( i = 0; i < yPlotTicks.length; i++) {
+		for (i = 0; i < yPlotTicks.length; i++) {
 			if (-yPlotTicks[i] >= 0 && -yPlotTicks[i] <= this.dim[1]) {
 				this.parent.line(0, yPlotTicks[i], this.dim[0], yPlotTicks[i]);
 			}
@@ -4340,7 +4345,7 @@ GPlot.prototype.drawLegend = function(text, xRelativePos, yRelativePos) {
 	this.parent.noStroke();
 
 	for (var i = 0; i < text.length; i++) {
-		var plotPosition = [xRelativePos[i] * this.dim[0], -yRelativePos[i] * this.dim[1]];
+		var plotPosition = [ xRelativePos[i] * this.dim[0], -yRelativePos[i] * this.dim[1] ];
 		var position = this.mainLayer.plotToValue(plotPosition[0] + rectSize, plotPosition[1]);
 
 		if (i === 0) {
@@ -4899,19 +4904,19 @@ GPlot.prototype.setVerticalAxesTicks = function(ticks) {
 };
 
 GPlot.prototype.setFontName = function(fontName) {
-	this.maniLayer.setFontName(fontName);
+	this.mainLayer.setFontName(fontName);
 };
 
 GPlot.prototype.setFontColor = function(fontColor) {
-	this.maniLayer.setFontColor(fontColor);
+	this.mainLayer.setFontColor(fontColor);
 };
 
 GPlot.prototype.setFontSize = function(fontSize) {
-	this.maniLayer.setFontSize(fontSize);
+	this.mainLayer.setFontSize(fontSize);
 };
 
 GPlot.prototype.setFontProperties = function(fontName, fontColor, fontSize) {
-	this.maniLayer.setFontProperties(fontName, fontColor, fontSize);
+	this.mainLayer.setFontProperties(fontName, fontColor, fontSize);
 };
 
 GPlot.prototype.setAllFontProperties = function(fontName, fontColor, fontSize) {
@@ -4923,7 +4928,7 @@ GPlot.prototype.setAllFontProperties = function(fontName, fontColor, fontSize) {
 
 	this.mainLayer.setAllFontProperties(fontName, fontColor, fontSize);
 
-	for (var i = 0; i < layerList.length; i++) {
+	for (var i = 0; i < this.layerList.length; i++) {
 		this.layerList[i].setAllFontProperties(fontName, fontColor, fontSize);
 	}
 };
@@ -4994,7 +4999,7 @@ GPlot.prototype.getLayer = function(id) {
 		}
 	}
 
-	if ( typeof layer === "undefined") {
+	if (typeof layer === "undefined") {
 		console.log("Couldn't find a layer in the plot with id = " + id);
 	}
 
@@ -5248,7 +5253,7 @@ GPlot.prototype.getButton = function(event) {
 		button = this.parent.CENTER;
 	} else if (event.button === 2) {
 		button = this.parent.RIGHT;
-	} else if ( typeof event.button === "undefined") {
+	} else if (typeof event.button === "undefined") {
 		button = this.parent.LEFT;
 	}
 
@@ -5272,20 +5277,14 @@ GPlot.prototype.getModifier = function(event) {
 };
 
 GPlot.prototype.saveResetLimits = function() {
-	if ( typeof this.xLimReset === "undefined" || typeof this.yLimReset === "undefined") {
+	if (typeof this.xLimReset === "undefined" || typeof this.yLimReset === "undefined") {
 		this.xLimReset = this.xLim.slice();
 		this.yLimReset = this.yLim.slice();
 	}
 };
 
-GPlot.prototype.panningFunction = function() {
-	if ( typeof this.panningReferencePoint !== "undefined") {
-		this.align(this.panningReferencePoint, this.parent.mouseX, this.parent.mouseY);
-	}
-};
-
 GPlot.prototype.clickEvent = function(event) {
-	e = event || window.event;
+	var e = event || window.event;
 
 	if (this.isOverBox()) {
 		var button = this.getButton(e);
@@ -5319,7 +5318,7 @@ GPlot.prototype.clickEvent = function(event) {
 		}
 
 		if (this.resetIsActive && button === this.resetButton && modifier === this.resetKeyModifier) {
-			if ( typeof this.xLimReset !== "undefined" && typeof this.yLimReset !== "undefined") {
+			if (typeof this.xLimReset !== "undefined" && typeof this.yLimReset !== "undefined") {
 				this.setXLim(this.xLimReset);
 				this.setYLim(this.yLimReset);
 				this.xLimReset = undefined;
@@ -5329,8 +5328,91 @@ GPlot.prototype.clickEvent = function(event) {
 	}
 };
 
+GPlot.prototype.touchMoveEvent = function(event) {
+	var e = event || window.event;
+	e.preventDefault();
+
+	if (this.panningIsActive) {
+		this.align(this.panningReferencePoint, this.parent.mouseX, this.parent.mouseY);
+	}
+
+	if (this.labelingIsActive) {
+		this.mousePos = [ this.parent.mouseX, this.parent.mouseY ];
+	}
+
+	if(this.zoomingIsActive && typeof e.touches !== "undefined" && e.touches.length === 2){
+		var dx = e.touches[ 0 ].pageX - e.touches[ 1 ].pageX;
+		var dy = e.touches[ 0 ].pageY - e.touches[ 1 ].pageY;
+		var distance = Math.sqrt( dx * dx + dy * dy );
+		this.zoom(distance/this.zoomStartDistance, this.zoomStartPosition[0], this.zoomStartPosition[1]);
+		this.zoomStartDistance = distance;
+	}
+};
+
+GPlot.prototype.touchStartEvent = function(event) {
+	var e = event || window.event;
+
+	if (this.isOverBox()) {
+		if(this.listener) {
+			document.removeEventListener('touchmove', this.listener, false);
+		}
+
+		this.listener = this.touchMoveEvent.bind(this);
+		document.addEventListener('touchmove', this.listener , false);
+		
+		if (this.panningIsActive) {
+			this.panningReferencePoint = this.getValueAt(this.parent.mouseX, this.parent.mouseY);
+		}
+
+		if (this.labelingIsActive) {
+			this.mousePos = [ this.parent.mouseX, this.parent.mouseY ];
+		}
+		
+		if(this.zoomingIsActive && typeof e.touches !== "undefined" && e.touches.length === 2){
+			var dx = e.touches[ 0 ].pageX - e.touches[ 1 ].pageX;
+			var dy = e.touches[ 0 ].pageY - e.touches[ 1 ].pageY;
+			this.zoomStartDistance = Math.sqrt( dx * dx + dy * dy );
+			this.zoomStartPosition = [this.parent.mouseX, this.parent.mouseY];
+		}
+	}
+};
+
+GPlot.prototype.touchEndEvent = function(event) {
+	if(this.listener) {
+		document.removeEventListener('touchmove', this.listener, false);
+	}
+
+	if (this.panningIsActive) {
+		this.panningReferencePoint = undefined;
+	}
+
+	if (this.labelingIsActive) {
+		this.mousePos = undefined;
+	}
+	
+	if(this.zoomingIsActive){
+		this.zoomStartDistance = undefined;
+		this.zoomStartPosition = undefined;		
+	}
+};
+
+GPlot.prototype.mouseMoveEvent = function(event) {
+	var e = event || window.event;
+	var button = this.getButton(e);
+	var modifier = this.getModifier(e);
+	//e.preventDefault();
+
+	if (this.panningIsActive && button === this.panningButton && modifier === this.panningKeyModifier) {
+		this.align(this.panningReferencePoint, this.parent.mouseX, this.parent.mouseY);
+	}
+
+	if (this.labelingIsActive && button === this.labelingButton && modifier === this.labelingKeyModifier) {
+		this.mousePos = [ this.parent.mouseX, this.parent.mouseY ];
+	}
+};
+
 GPlot.prototype.mouseDownEvent = function(event) {
-	e = event || window.event;
+	var e = event || window.event;
 
 	if (this.isOverBox()) {
 		var button = this.getButton(e);
@@ -5345,27 +5427,25 @@ GPlot.prototype.mouseDownEvent = function(event) {
 			// Calculate the panning reference point
 			this.panningReferencePoint = this.getValueAt(this.parent.mouseX, this.parent.mouseY);
 
-			// Execute the panning function every 100ms
-			this.panningIntervalId = setInterval(this.panningFunction.bind(this), 100);
+			// Add the mousemove event listener
+			this.listener = this.mouseMoveEvent.bind(this);
+			document.addEventListener('mousemove', this.listener , false);
 		}
 
 		if (this.labelingIsActive && button === this.labelingButton && modifier === this.labelingKeyModifier) {
-			this.mousePos = [this.parent.mouseX, this.parent.mouseY];
+			this.mousePos = [ this.parent.mouseX, this.parent.mouseY ];
 		}
 	}
 };
 
 GPlot.prototype.mouseUpEvent = function(event) {
-	e = event || window.event;
+	var e = event || window.event;
 	var button = this.getButton(e);
-	var modifier = this.getModifier(e);
 
-	if (this.panningIsActive && button === this.panningButton && typeof this.panningIntervalId !== "undefined") {
-		// Stop executing the panning function
-		clearInterval(this.panningIntervalId);
+	if (this.panningIsActive && button === this.panningButton) {
+		document.removeEventListener('mousemove', this.listener, false);
 
 		// Reset the panning variables
-		this.panningIntervalId = undefined;
 		this.panningReferencePoint = undefined;
 	}
 
@@ -5380,7 +5460,7 @@ GPlot.prototype.mouseUpEvent = function(event) {
 };
 
 GPlot.prototype.wheelEvent = function(event) {
-	e = event || window.event;
+	var e = event || window.event;
 
 	if (this.isOverBox()) {
 		var deltaY = e.deltaY;
@@ -5408,9 +5488,9 @@ GPlot.prototype.wheelEvent = function(event) {
 };
 
 GPlot.prototype.preventDefaultEvent = function(event) {
-	e = event || window.event;
+	var e = event || window.event;
 
-	if (this.isOverBox()) {
+	if (this.isOverPlot()) {
 		// Don't show the menu inside the plot area
 		if (e.preventDefault) {
 			e.preventDefault();
@@ -5421,9 +5501,9 @@ GPlot.prototype.preventDefaultEvent = function(event) {
 };
 
 GPlot.prototype.preventWheelDefault = function() {
-	window.addEventListener("wheel", this.preventDefaultEvent.bind(this), false);
+	this.parentElt.addEventListener("wheel", this.preventDefaultEvent.bind(this), false);
 };
 
 GPlot.prototype.preventRightClickDefault = function() {
-	window.addEventListener("contextmenu", this.preventDefaultEvent.bind(this), false);
+	this.parentElt.addEventListener("contextmenu", this.preventDefaultEvent.bind(this), false);
 };

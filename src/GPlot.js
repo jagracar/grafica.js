@@ -571,7 +571,7 @@ GPlot.prototype.centerAndZoom = function(factor, xValue, yValue) {
 	this.xAxis.setLim(this.xLim);
 	this.topAxis.setLim(this.xLim);
 	this.yAxis.setLim(this.yLim);
-	this.rightAxis.setLim(yLim);
+	this.rightAxis.setLim(this.yLim);
 
 	// Update the plot limits (the layers, because the limits are fixed)
 	this.updateLimits();
@@ -925,8 +925,7 @@ GPlot.prototype.drawLegend = function(text, xRelativePos, yRelativePos) {
 		} else {
 			this.parent.fill(this.layerList[i - 1].getLineColor());
 			this.parent.rect(plotPosition[0], plotPosition[1], rectSize, rectSize);
-			this.layerList[i - i].drawAnnotation(text[i], position[0], position[1], this.parent.LEFT,
-					this.parent.CENTER);
+			this.layerList[i - i].drawAnnotation(text[i], position[0], position[1], this.parent.LEFT, this.parent.CENTER);
 		}
 	}
 
@@ -1475,19 +1474,19 @@ GPlot.prototype.setVerticalAxesTicks = function(ticks) {
 };
 
 GPlot.prototype.setFontName = function(fontName) {
-	this.maniLayer.setFontName(fontName);
+	this.mainLayer.setFontName(fontName);
 };
 
 GPlot.prototype.setFontColor = function(fontColor) {
-	this.maniLayer.setFontColor(fontColor);
+	this.mainLayer.setFontColor(fontColor);
 };
 
 GPlot.prototype.setFontSize = function(fontSize) {
-	this.maniLayer.setFontSize(fontSize);
+	this.mainLayer.setFontSize(fontSize);
 };
 
 GPlot.prototype.setFontProperties = function(fontName, fontColor, fontSize) {
-	this.maniLayer.setFontProperties(fontName, fontColor, fontSize);
+	this.mainLayer.setFontProperties(fontName, fontColor, fontSize);
 };
 
 GPlot.prototype.setAllFontProperties = function(fontName, fontColor, fontSize) {
@@ -1499,7 +1498,7 @@ GPlot.prototype.setAllFontProperties = function(fontName, fontColor, fontSize) {
 
 	this.mainLayer.setAllFontProperties(fontName, fontColor, fontSize);
 
-	for (var i = 0; i < layerList.length; i++) {
+	for (var i = 0; i < this.layerList.length; i++) {
 		this.layerList[i].setAllFontProperties(fontName, fontColor, fontSize);
 	}
 };

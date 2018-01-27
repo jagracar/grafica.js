@@ -285,7 +285,7 @@ GHistogram.prototype.setPlotPoints = function(plotPoints) {
 			this.plotPoints[i].set(plotPoints[i]);
 		}
 
-		for ( i = this.plotPoints.lengh; i < nPoints; i++) {
+		for ( i = this.plotPoints.length; i < nPoints; i++) {
 			this.plotPoints[i] = new GPoint(plotPoints[i]);
 		}
 	}

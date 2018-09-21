@@ -92,12 +92,11 @@ function GPlot() {
 	this.yLimReset = undefined;
 
 	// Add the event listeners
-	//document.addEventListener("click", this.clickEvent.bind(this), false);
 	this.parentElt.addEventListener("mousedown", this.mouseDownEvent.bind(this), false);
-	this.parentElt.addEventListener("mouseup", this.mouseUpEvent.bind(this), false);
+	window.addEventListener("mouseup", this.mouseUpEvent.bind(this), false);
 	this.parentElt.addEventListener("touchstart", this.touchStartEvent.bind(this), false);
-	this.parentElt.addEventListener("touchend", this.touchEndEvent.bind(this), false);
-	this.parentElt.addEventListener("touchcancel", this.touchEndEvent.bind(this), false);
+	window.addEventListener("touchend", this.touchEndEvent.bind(this), false);
+	window.addEventListener("touchcancel", this.touchEndEvent.bind(this), false);
 	this.parentElt.addEventListener("wheel", this.wheelEvent.bind(this), false);
 }
 
@@ -1922,13 +1921,13 @@ GPlot.prototype.touchMoveEvent = function(event) {
 GPlot.prototype.touchStartEvent = function(event) {
 	var e = event || window.event;
 
-	if (this.isOverBox()) {
-		if(this.listener) {
-			document.removeEventListener('touchmove', this.listener, false);
-		}
+	if(this.listener) {
+		window.removeEventListener('touchmove', this.listener, false);
+	}
 
+	if (this.isOverBox()) {
 		this.listener = this.touchMoveEvent.bind(this);
-		document.addEventListener('touchmove', this.listener , false);
+		window.addEventListener('touchmove', this.listener, {passive: false});
 		
 		if (this.panningIsActive) {
 			this.panningReferencePoint = this.getValueAt(this.parent.mouseX, this.parent.mouseY);
@@ -1949,7 +1948,7 @@ GPlot.prototype.touchStartEvent = function(event) {
 
 GPlot.prototype.touchEndEvent = function(event) {
 	if(this.listener) {
-		document.removeEventListener('touchmove', this.listener, false);
+		window.removeEventListener('touchmove', this.listener, false);
 	}
 
 	if (this.panningIsActive) {
@@ -1970,7 +1969,6 @@ GPlot.prototype.mouseMoveEvent = function(event) {
 	var e = event || window.event;
 	var button = this.getButton(e);
 	var modifier = this.getModifier(e);
-	//e.preventDefault();
 
 	if (this.panningIsActive && button === this.panningButton && modifier === this.panningKeyModifier) {
 		this.align(this.panningReferencePoint, this.parent.mouseX, this.parent.mouseY);
@@ -1983,6 +1981,10 @@ GPlot.prototype.mouseMoveEvent = function(event) {
 
 GPlot.prototype.mouseDownEvent = function(event) {
 	var e = event || window.event;
+
+	if(this.listener) {
+		window.removeEventListener('mousemove', this.listener, false);
+	}
 
 	if (this.isOverBox()) {
 		var button = this.getButton(e);
@@ -1999,7 +2001,7 @@ GPlot.prototype.mouseDownEvent = function(event) {
 
 			// Add the mousemove event listener
 			this.listener = this.mouseMoveEvent.bind(this);
-			document.addEventListener('mousemove', this.listener , false);
+			window.addEventListener('mousemove', this.listener , false);
 		}
 
 		if (this.labelingIsActive && button === this.labelingButton && modifier === this.labelingKeyModifier) {
@@ -2013,7 +2015,7 @@ GPlot.prototype.mouseUpEvent = function(event) {
 	var button = this.getButton(e);
 
 	if (this.panningIsActive && button === this.panningButton) {
-		document.removeEventListener('mousemove', this.listener, false);
+		window.removeEventListener('mousemove', this.listener, false);
 
 		// Reset the panning variables
 		this.panningReferencePoint = undefined;
@@ -2060,8 +2062,7 @@ GPlot.prototype.wheelEvent = function(event) {
 GPlot.prototype.preventDefaultEvent = function(event) {
 	var e = event || window.event;
 
-	if (this.isOverPlot()) {
-		// Don't show the menu inside the plot area
+	if (this.isOverBox()) {
 		if (e.preventDefault) {
 			e.preventDefault();
 		} else {

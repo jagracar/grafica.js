@@ -92,12 +92,18 @@ function GPlot() {
 	this.yLimReset = undefined;
 
 	// Add the event listeners
-	this.parentElt.addEventListener("mousedown", this.mouseDownEvent.bind(this), false);
-	window.addEventListener("mouseup", this.mouseUpEvent.bind(this), false);
-	this.parentElt.addEventListener("touchstart", this.touchStartEvent.bind(this), false);
-	window.addEventListener("touchend", this.touchEndEvent.bind(this), false);
-	window.addEventListener("touchcancel", this.touchEndEvent.bind(this), false);
-	this.parentElt.addEventListener("wheel", this.wheelEvent.bind(this), false);
+	this.clickListener = this.clickEvent.bind(this);
+	this.wheelListener = this.wheelEvent.bind(this);
+	this.mouseDownListener = this.mouseDownEvent.bind(this);
+	this.mouseMoveListener = this.mouseMoveEvent.bind(this);
+	this.mouseUpListener = this.mouseUpEvent.bind(this);
+	this.touchStartListener = this.touchStartEvent.bind(this);
+	this.touchMoveListener = this.touchMoveEvent.bind(this);
+	this.touchEndListener = this.touchEndEvent.bind(this);
+	this.parentElt.addEventListener("click", this.clickListener, false);
+	this.parentElt.addEventListener("wheel", this.wheelListener, false);
+	this.parentElt.addEventListener("mousedown", this.mouseDownListener, false);
+	this.parentElt.addEventListener("touchstart", this.touchStartListener, false);
 }
 
 // Constants
@@ -1897,6 +1903,140 @@ GPlot.prototype.clickEvent = function(event) {
 	}
 };
 
+GPlot.prototype.wheelEvent = function(event) {
+	var e = event || window.event;
+
+	if (this.isOverBox()) {
+		var deltaY = e.deltaY;
+		var button = this.parent.CENTER;
+		var modifier = this.getModifier(e);
+
+		if (this.zoomingIsActive) {
+			if (button === this.increaseZoomButton && modifier === this.increaseZoomKeyModifier && deltaY > 0) {
+				e.preventDefault();
+
+				// Save the axes limits
+				if (this.resetIsActive) {
+					this.saveResetLimits();
+				}
+
+				this.zoom(this.zoomFactor, this.parent.mouseX, this.parent.mouseY);
+			} else if (button === this.decreaseZoomButton && modifier === this.decreaseZoomKeyModifier && deltaY < 0) {
+				e.preventDefault();
+
+				// Save the axes limits
+				if (this.resetIsActive) {
+					this.saveResetLimits();
+				}
+
+				this.zoom(1 / this.zoomFactor, this.parent.mouseX, this.parent.mouseY);
+			}
+		}
+	}
+};
+
+GPlot.prototype.mouseDownEvent = function(event) {
+	var e = event || window.event;
+
+	if (this.isOverBox()) {
+		var addListeners = false;
+		var button = this.getButton(e);
+		var modifier = this.getModifier(e);
+
+		if (this.panningIsActive && button === this.panningButton && modifier === this.panningKeyModifier) {
+			addListeners = true;
+
+			// Save the axes limits
+			if (this.resetIsActive) {
+				this.saveResetLimits();
+			}
+
+			// Calculate the panning reference point
+			this.panningReferencePoint = this.getValueAt(this.parent.mouseX, this.parent.mouseY);
+		}
+
+		if (this.labelingIsActive && button === this.labelingButton && modifier === this.labelingKeyModifier) {
+			addListeners = true;
+			this.mousePos = [ this.parent.mouseX, this.parent.mouseY ];
+		}
+
+		if (addListeners) {
+			// Add the mousemove and mouseup event listeners
+			document.addEventListener('mousemove', this.mouseMoveListener, false);
+			document.addEventListener('mouseup', this.mouseUpListener, false);
+			//e.preventDefault();
+		}
+	}
+};
+
+GPlot.prototype.mouseMoveEvent = function(event) {
+	var e = event || window.event;
+	var button = this.getButton(e);
+	var modifier = this.getModifier(e);
+	event.preventDefault();
+
+	if (this.panningIsActive && button === this.panningButton && modifier === this.panningKeyModifier) {
+		this.align(this.panningReferencePoint, this.parent.mouseX, this.parent.mouseY);
+	}
+
+	if (this.labelingIsActive && button === this.labelingButton && modifier === this.labelingKeyModifier) {
+		this.mousePos = [ this.parent.mouseX, this.parent.mouseY ];
+	}
+};
+
+GPlot.prototype.mouseUpEvent = function(event) {
+	var e = event || window.event;
+	var button = this.getButton(e);
+
+	// Remove the mousemove and mouseup event listeners
+	document.removeEventListener('mousemove', this.mouseMoveListener, false);
+	document.removeEventListener('mouseup', this.mouseUpListener, false);
+
+	if (this.panningIsActive && button === this.panningButton) {
+		// Reset the panning variables
+		this.panningReferencePoint = undefined;
+	}
+
+	if (this.labelingIsActive && button === this.labelingButton) {
+		this.mousePos = undefined;
+	}
+};
+
+GPlot.prototype.touchStartEvent = function(event) {
+	var e = event || window.event;
+	this.parent._ontouchstart(e);
+
+	if (this.isOverBox()) {
+		var addListeners = false;
+
+		if (this.panningIsActive) {
+			addListeners = true;
+			this.panningReferencePoint = this.getValueAt(this.parent.mouseX, this.parent.mouseY);
+		}
+
+		if (this.labelingIsActive) {
+			addListeners = true;
+			this.mousePos = [ this.parent.mouseX, this.parent.mouseY ];
+		}
+
+		if(this.zoomingIsActive && typeof e.touches !== "undefined" && e.touches.length === 2){
+			addListeners = true;
+			var dx = e.touches[ 0 ].pageX - e.touches[ 1 ].pageX;
+			var dy = e.touches[ 0 ].pageY - e.touches[ 1 ].pageY;
+			this.zoomStartDistance = Math.sqrt( dx * dx + dy * dy );
+			this.zoomStartPosition = [this.parent.mouseX, this.parent.mouseY];
+		}
+
+		if (addListeners) {
+			// Add the touchmove, touchend and touchcancel event listeners
+			document.addEventListener('touchmove', this.touchMoveListener, {passive: false});
+			document.addEventListener('touchend', this.touchEndListener, false);
+			document.addEventListener('touchcancel', this.touchEndListener, false);
+			//e.preventDefault();
+		}
+	}
+};
+
 GPlot.prototype.touchMoveEvent = function(event) {
 	var e = event || window.event;
 	e.preventDefault();
@@ -1918,38 +2058,11 @@ GPlot.prototype.touchMoveEvent = function(event) {
 	}
 };
 
-GPlot.prototype.touchStartEvent = function(event) {
-	var e = event || window.event;
-
-	if(this.listener) {
-		window.removeEventListener('touchmove', this.listener, false);
-	}
-
-	if (this.isOverBox()) {
-		this.listener = this.touchMoveEvent.bind(this);
-		window.addEventListener('touchmove', this.listener, {passive: false});
-		
-		if (this.panningIsActive) {
-			this.panningReferencePoint = this.getValueAt(this.parent.mouseX, this.parent.mouseY);
-		}
-
-		if (this.labelingIsActive) {
-			this.mousePos = [ this.parent.mouseX, this.parent.mouseY ];
-		}
-		
-		if(this.zoomingIsActive && typeof e.touches !== "undefined" && e.touches.length === 2){
-			var dx = e.touches[ 0 ].pageX - e.touches[ 1 ].pageX;
-			var dy = e.touches[ 0 ].pageY - e.touches[ 1 ].pageY;
-			this.zoomStartDistance = Math.sqrt( dx * dx + dy * dy );
-			this.zoomStartPosition = [this.parent.mouseX, this.parent.mouseY];
-		}
-	}
-};
-
 GPlot.prototype.touchEndEvent = function(event) {
-	if(this.listener) {
-		window.removeEventListener('touchmove', this.listener, false);
-	}
+	// Remove the touchmove, touchend and touch cancel event listeners
+	document.removeEventListener('touchmove', this.touchMoveListener, false);
+	document.removeEventListener('touchend', this.touchEndListener, false);
+	document.removeEventListener('touchcancel', this.touchEndListener, false);
 
 	if (this.panningIsActive) {
 		this.panningReferencePoint = undefined;
@@ -1958,104 +2071,10 @@ GPlot.prototype.touchEndEvent = function(event) {
 	if (this.labelingIsActive) {
 		this.mousePos = undefined;
 	}
-	
+
 	if(this.zoomingIsActive){
 		this.zoomStartDistance = undefined;
 		this.zoomStartPosition = undefined;		
-	}
-};
-
-GPlot.prototype.mouseMoveEvent = function(event) {
-	var e = event || window.event;
-	var button = this.getButton(e);
-	var modifier = this.getModifier(e);
-
-	if (this.panningIsActive && button === this.panningButton && modifier === this.panningKeyModifier) {
-		this.align(this.panningReferencePoint, this.parent.mouseX, this.parent.mouseY);
-	}
-
-	if (this.labelingIsActive && button === this.labelingButton && modifier === this.labelingKeyModifier) {
-		this.mousePos = [ this.parent.mouseX, this.parent.mouseY ];
-	}
-};
-
-GPlot.prototype.mouseDownEvent = function(event) {
-	var e = event || window.event;
-
-	if(this.listener) {
-		window.removeEventListener('mousemove', this.listener, false);
-	}
-
-	if (this.isOverBox()) {
-		var button = this.getButton(e);
-		var modifier = this.getModifier(e);
-
-		if (this.panningIsActive && button === this.panningButton && modifier === this.panningKeyModifier) {
-			// Save the axes limits
-			if (this.resetIsActive) {
-				this.saveResetLimits();
-			}
-
-			// Calculate the panning reference point
-			this.panningReferencePoint = this.getValueAt(this.parent.mouseX, this.parent.mouseY);
-
-			// Add the mousemove event listener
-			this.listener = this.mouseMoveEvent.bind(this);
-			window.addEventListener('mousemove', this.listener , false);
-		}
-
-		if (this.labelingIsActive && button === this.labelingButton && modifier === this.labelingKeyModifier) {
-			this.mousePos = [ this.parent.mouseX, this.parent.mouseY ];
-		}
-	}
-};
-
-GPlot.prototype.mouseUpEvent = function(event) {
-	var e = event || window.event;
-	var button = this.getButton(e);
-
-	if (this.panningIsActive && button === this.panningButton) {
-		window.removeEventListener('mousemove', this.listener, false);
-
-		// Reset the panning variables
-		this.panningReferencePoint = undefined;
-	}
-
-	if (this.labelingIsActive && button === this.labelingButton) {
-		this.mousePos = undefined;
-	}
-
-	if (button === this.parent.RIGHT) {
-		// This is a right click!
-		this.clickEvent(e);
-	}
-};
-
-GPlot.prototype.wheelEvent = function(event) {
-	var e = event || window.event;
-
-	if (this.isOverBox()) {
-		var deltaY = e.deltaY;
-		var button = this.parent.CENTER;
-		var modifier = this.getModifier(e);
-
-		if (this.zoomingIsActive) {
-			if (button === this.increaseZoomButton && modifier === this.increaseZoomKeyModifier && deltaY > 0) {
-				// Save the axes limits
-				if (this.resetIsActive) {
-					this.saveResetLimits();
-				}
-
-				this.zoom(this.zoomFactor, this.parent.mouseX, this.parent.mouseY);
-			} else if (button === this.decreaseZoomButton && modifier === this.decreaseZoomKeyModifier && deltaY < 0) {
-				// Save the axes limits
-				if (this.resetIsActive) {
-					this.saveResetLimits();
-				}
-
-				this.zoom(1 / this.zoomFactor, this.parent.mouseX, this.parent.mouseY);
-			}
-		}
 	}
 };
 
@@ -2063,11 +2082,16 @@ GPlot.prototype.preventDefaultEvent = function(event) {
 	var e = event || window.event;
 
 	if (this.isOverBox()) {
-		if (e.preventDefault) {
-			e.preventDefault();
-		} else {
-			e.returnValue = false;
-		}
+		e.preventDefault();
+	}
+};
+
+GPlot.prototype.contextMenuEvent = function(event) {
+	var e = event || window.event;
+
+	if (this.isOverBox()) {
+		e.preventDefault();
+		this.clickEvent(e);
 	}
 };
 
@@ -2076,5 +2100,5 @@ GPlot.prototype.preventWheelDefault = function() {
 };
 
 GPlot.prototype.preventRightClickDefault = function() {
-	this.parentElt.addEventListener("contextmenu", this.preventDefaultEvent.bind(this), false);
+	this.parentElt.addEventListener("contextmenu", this.contextMenuEvent.bind(this), false);
 };

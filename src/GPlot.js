@@ -514,6 +514,7 @@ GPlot.prototype.moveHorizontalAxesLim = function(delta) {
 
 	// Fix the limits
 	this.fixedXLim = true;
+	this.fixedYLim = true;
 
 	// Move the horizontal axes
 	this.xAxis.moveLim(this.xLim);
@@ -538,6 +539,7 @@ GPlot.prototype.moveVerticalAxesLim = function(delta) {
 	}
 
 	// Fix the limits
+	this.fixedXLim = true;
 	this.fixedYLim = true;
 
 	// Move the vertical axes

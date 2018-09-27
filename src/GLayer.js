@@ -1561,7 +1561,7 @@ GLayer.prototype.addPointAtIndexPos = function() {
 	if (index <= this.points.length) {
 		this.points.splice(index, 0, new GPoint(x, y, label));
 		this.plotPoints.splice(index, 0, new GPoint(this.valueToXPlot(x), this.valueToYPlot(y), label));
-		this.inside.splice(index, 0, this.isInside(this.plotPoints[0]));
+		this.inside.splice(index, 0, this.isInside(this.plotPoints[index]));
 
 		if ( typeof this.hist !== "undefined") {
 			this.hist.setPlotPoints(this.plotPoints);

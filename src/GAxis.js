@@ -715,9 +715,9 @@ GAxis.prototype.setNTicks = function(nTicks) {
 	if (nTicks >= 0) {
 		this.nTicks = nTicks;
 		this.ticksSeparation = -1;
+		this.fixedTicks = false;
 
 		if (!this.log) {
-			this.fixedTicks = false;
 			this.updateTicks();
 			this.updatePlotTicks();
 			this.updateTicksInside();
@@ -728,9 +728,9 @@ GAxis.prototype.setNTicks = function(nTicks) {
 
 GAxis.prototype.setTicksSeparation = function(ticksSeparation) {
 	this.ticksSeparation = ticksSeparation;
+	this.fixedTicks = false;
 
 	if (!this.log) {
-		this.fixedTicks = false;
 		this.updateTicks();
 		this.updatePlotTicks();
 		this.updateTicksInside();

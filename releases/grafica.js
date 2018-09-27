@@ -1131,9 +1131,9 @@ GAxis.prototype.setNTicks = function(nTicks) {
 	if (nTicks >= 0) {
 		this.nTicks = nTicks;
 		this.ticksSeparation = -1;
+		this.fixedTicks = false;
 
 		if (!this.log) {
-			this.fixedTicks = false;
 			this.updateTicks();
 			this.updatePlotTicks();
 			this.updateTicksInside();
@@ -1144,9 +1144,9 @@ GAxis.prototype.setNTicks = function(nTicks) {
 
 GAxis.prototype.setTicksSeparation = function(ticksSeparation) {
 	this.ticksSeparation = ticksSeparation;
+	this.fixedTicks = false;
 
 	if (!this.log) {
-		this.fixedTicks = false;
 		this.updateTicks();
 		this.updatePlotTicks();
 		this.updateTicksInside();
@@ -3254,7 +3254,7 @@ GLayer.prototype.addPointAtIndexPos = function() {
 	if (index <= this.points.length) {
 		this.points.splice(index, 0, new GPoint(x, y, label));
 		this.plotPoints.splice(index, 0, new GPoint(this.valueToXPlot(x), this.valueToYPlot(y), label));
-		this.inside.splice(index, 0, this.isInside(this.plotPoints[0]));
+		this.inside.splice(index, 0, this.isInside(this.plotPoints[index]));
 
 		if ( typeof this.hist !== "undefined") {
 			this.hist.setPlotPoints(this.plotPoints);
@@ -3944,6 +3944,7 @@ GPlot.prototype.moveHorizontalAxesLim = function(delta) {
 
 	// Fix the limits
 	this.fixedXLim = true;
+	this.fixedYLim = true;
 
 	// Move the horizontal axes
 	this.xAxis.moveLim(this.xLim);
@@ -3968,6 +3969,7 @@ GPlot.prototype.moveVerticalAxesLim = function(delta) {
 	}
 
 	// Fix the limits
+	this.fixedXLim = true;
 	this.fixedYLim = true;
 
 	// Move the vertical axes

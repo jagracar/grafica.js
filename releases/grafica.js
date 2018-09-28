@@ -5396,7 +5396,6 @@ GPlot.prototype.mouseDownEvent = function(event) {
 			// Add the mousemove and mouseup event listeners
 			document.addEventListener('mousemove', this.mouseMoveListener, false);
 			document.addEventListener('mouseup', this.mouseUpListener, false);
-			//e.preventDefault();
 		}
 	}
 };
@@ -5464,7 +5463,6 @@ GPlot.prototype.touchStartEvent = function(event) {
 			document.addEventListener('touchmove', this.touchMoveListener, {passive: false});
 			document.addEventListener('touchend', this.touchEndListener, false);
 			document.addEventListener('touchcancel', this.touchEndListener, false);
-			//e.preventDefault();
 		}
 	}
 };
